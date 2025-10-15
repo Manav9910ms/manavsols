@@ -178,11 +178,3 @@ footer {
     padding: 2rem;
     background: rgba(0,0,0,0.5);
 }
-body {
-  background-image: url('manavsols/bg1.jpeg'); /* path to your image */
-  background-size: cover;                  /* fill the screen */
-  background-position: center;             /* keep it centered */
-  background-repeat: no-repeat;            /* prevent tiling */
-  margin: 0;                               /* remove default spacing */
-  font-family: Arial, sans-serif;          /* optional styling */
-}
