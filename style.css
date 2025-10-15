@@ -17,7 +17,7 @@ body {
     position: sticky;
     top: 0;
     width: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -31,6 +31,7 @@ body {
     font-weight: bold;
 }
 
+/* Navbar links */
 .nav-links {
     list-style: none;
     display: flex;
@@ -38,13 +39,13 @@ body {
 }
 
 .nav-links li a {
-    color: #fff;
-    font-weight: 500;
+    color: #fff;              /* White text */
+    font-weight: 600;
     transition: 0.3s;
 }
 
 .nav-links li a:hover {
-    color: #ffeb3b;
+    color: #ffeb3b;          /* Yellow text on hover */
 }
 
 /* Floating social links */
@@ -61,18 +62,18 @@ body {
 }
 
 .social-links a {
-    background: rgba(255,255,255,0.1);
+    background: #fff;         /* White background for visibility */
+    color: #2575fc;           /* Blue text */
     padding: 0.5rem 1rem;
     border-radius: 0 25px 25px 0;
-    color: #fff;
     text-decoration: none;
+    font-weight: 600;
     transition: 0.3s;
-    font-weight: 500;
 }
 
 .social-links a:hover {
-    background: #ffeb3b;
-    color: #000;
+    background: #2575fc;      /* Blue background on hover */
+    color: #fff;              /* White text on hover */
 }
 
 /* Hero Section */
