@@ -1,7 +1,7 @@
 /* Reset and global styles */
 /* style.css */
 body {
-  background-image: url('bg1.jpeg'); /* path to your image */
+  background-image: url('manavsols/bg1.jpeg'); /* path to your image */
   background-size: cover;                  /* fill the screen */
   background-position: center;             /* keep it centered */
   background-repeat: no-repeat;            /* prevent tiling */
