@@ -158,6 +158,18 @@ body {
     font-size: 1.2rem;
 }
 
+/* Contact Section Links */
+.contact-info a {
+    color: #ffeb3b;          /* Bright yellow for visibility */
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.contact-info a:hover {
+    color: #fff;             /* White on hover */
+    text-decoration: underline;
+}
 footer {
     text-align: center;
     padding: 2rem;
