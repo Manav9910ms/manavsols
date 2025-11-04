@@ -1,107 +1,32 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Two-column webpage — External CSS</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenFuture Organization</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="wrapper">
-    <h1>Two-column webpage examples — Left: menu/description  •  Right: related content</h1>
-    <p class="small">This file uses an external stylesheet <strong>style.css</strong> for layout and design.</p><!-- ========== FLEXBOX EXAMPLE ========== -->
-<section class="card" aria-labelledby="flex-title" style="margin-top:18px">
-  <h2 id="flex-title">Flexbox layout (recommended)</h2>
-  <div class="layout-flex" style="margin-top:12px">
-    <aside class="left card menu" aria-label="shop menu">
-      <h2>Menu</h2>
-      <p class="small">Find categories and shop info.</p>
-      <ul>
-        <li role="button" tabindex="0">All products</li>
-        <li role="button" tabindex="0">Snacks & Drinks</li>
-        <li role="button" tabindex="0">Stationery</li>
-        <li role="button" tabindex="0">Home essentials</li>
-        <li role="button" tabindex="0">Contact & Delivery</li>
-      </ul>
+    <header>
+        <h1>🌿 GreenFuture Organization</h1>
+        <nav class="navbar">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Projects</a></li>
+                <li><a href="#">Join Us</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-      <hr>
-      <div class="small muted">Open: Mon–Sat • 09:00–21:00</div>
-      <div><a class="btn" href="#">Visit store</a></div>
-    </aside>
+    <section class="content">
+        <h2>Welcome to GreenFuture!</h2>
+        <p>We are a fictional non-profit organization dedicated to protecting the environment, planting trees, and promoting sustainable living for future generations.</p>
+    </section>
 
-    <main class="right">
-      <div class="header-row">
-        <div>
-          <h2>Featured products</h2>
-          <div class="small muted">Updated just now</div>
-        </div>
-        <div class="small muted">Sort by: Popular</div>
-      </div>
-
-      <div class="content-grid">
-        <article class="product">
-          <h3>Masala Tea (250g)</h3>
-          <p class="small muted">Hot & comforting — local favorite.</p>
-          <div><span class="price">₹70</span></div>
-        </article>
-
-        <article class="product">
-          <h3>Notebooks (A4, pack of 3)</h3>
-          <p class="small muted">Durable, college-ruled.</p>
-          <div><span class="price">₹120</span></div>
-        </article>
-
-        <article class="product">
-          <h3>Energy Bar</h3>
-          <p class="small muted">Quick snack for study sessions.</p>
-          <div><span class="price">₹45</span></div>
-        </article>
-
-        <article class="product">
-          <h3>Reusable Water Bottle (500ml)</h3>
-          <p class="small muted">BPA-free, lightweight.</p>
-          <div><span class="price">₹199</span></div>
-        </article>
-      </div>
-    </main>
-  </div>
-</section>
-
-<!-- ========== FLOAT EXAMPLE ========== -->
-<section class="card" aria-labelledby="float-title">
-  <h2 id="float-title">Float-based layout (classic)</h2>
-  <div class="layout-float">
-    <aside class="left-f card" aria-label="classic menu">
-      <h3>About the shop</h3>
-      <p class="small muted">Neighborhood convenience store offering daily essentials and quick bites.</p>
-
-      <nav>
-        <ul>
-          <li>• Fresh snacks</li>
-          <li>• Cold drinks</li>
-          <li>• Quick stationery</li>
-        </ul>
-      </nav>
-    </aside>
-
-    <div class="right-f card">
-      <h3>Today's picks</h3>
-      <p class="small muted">Small selection curated for students.</p>
-
-      <div class="float-products">
-        <div>Tea sachets <br><strong>₹30</strong></div>
-        <div>Pencil set <br><strong>₹50</strong></div>
-        <div>Chips (single) <br><strong>₹25</strong></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer class="small muted">
-  Tip: Use the <strong>Flexbox</strong> example for modern layouts — floats are useful for legacy support.
-</footer>
-
-  </div>
+    <footer>
+        <p>&copy; 2025 GreenFuture Organization | All Rights Reserved</p>
+    </footer>
 </body>
 </html>
