@@ -1,153 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ruby Eyes — Manga & Anime Hub</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manav Sols | Cloud Kitchen</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#">
-        <div class="logo">
-          <span class="ruby">◈</span>
-          <span class="title">Ruby Eyes</span>
-        </div>
-        <small class="tag">Watch • Read • Discover</small>
-      </a>
-      <nav class="main-nav" id="mainNav">
-        <a href="#features">Home</a>
-        <a href="#manga">Manga</a>
-        <a href="#anime">Anime</a>
-        <a href="#about">About</a>
-        <button id="themeToggle" class="btn small">Dark</button>
-      </nav>
-      <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
-    </div>
-  </header>
 
-  <main>
-    <section class="hero" id="features">
-      <div class="container hero-grid">
-        <div class="hero-card">
-          <h1>Welcome to <span class="accent">Ruby Eyes</span></h1>
-          <p>Original manga, curated anime picks, and a cozy place to read and binge. Built for fans, by a fan.</p>
-          <div class="hero-actions">
-            <a class="btn" href="#manga">Start Reading</a>
-            <a class="btn outline" href="#anime">Start Watching</a>
-          </div>
-        </div>
-        <div class="image-card">
-          <div class="cover" aria-hidden="true">
-            <!-- decorative red eye -->
-            <svg viewBox="0 0 200 200" class="eye-svg">
-              <defs>
-                <radialGradient id="g" cx="30%" cy="30%">
-                  <stop offset="0%" stop-color="#ff6b6b" />
-                  <stop offset="100%" stop-color="#b01010" />
-                </radialGradient>
-              </defs>
-              <circle cx="100" cy="100" r="80" fill="#111" />
-              <ellipse cx="100" cy="100" rx="48" ry="28" fill="url(#g)" />
-              <circle cx="100" cy="90" r="6" fill="#fff" opacity="0.9" />
-            </svg>
-          </div>
-        </div>
-      </div>
-    </section>
+<header>
+  <h1>Manav Sols</h1>
+  <p>Fresh Food | Fast Delivery</p>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#menu">Menu</a>
+    <a href="#order">Order</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-    <section class="cards container" id="manga">
-      <h2>Latest Manga</h2>
-      <div class="grid-3">
-        <article class="card">
-          <img src="Logo.png" alt="Manga cover">
-          <h3>Reincarnated as an Arcane Lord</h3>
-          <p>New chapter: 2 — Colour panels and high-res pages.</p>
-          <div class="card-actions">
-            <a class="btn small" href="#">Read</a>
-            <a class="btn small outline" href="#">Download</a>
-          </div>
-        </article>
+<section id="home" class="hero">
+  <h2>Your Daily Food Solution</h2>
+  <p>Hygienic, tasty food delivered hot to your doorstep.</p>
+  <button onclick="orderNow()">Order Now</button>
+</section>
 
-        <article class="card">
-          <img src="https://via.placeholder.com/400x230?text=Original+Manga" alt="Manga cover">
-          <h3>Serpent Crown</h3>
-          <p>Fantasy-action, 24 pages per chapter — updated weekly.</p>
-          <div class="card-actions">
-            <a class="btn small" href="#">Read</a>
-            <a class="btn small outline" href="#">Download</a>
-          </div>
-        </article>
+<section id="menu">
+  <h2>Popular Menu</h2>
+  <div class="menu">
+    <div class="card">Dal Rice – ₹120</div>
+    <div class="card">Rajma Chawal – ₹130</div>
+    <div class="card">Veg Bowl – ₹150</div>
+    <div class="card">Paneer Wrap – ₹140</div>
+  </div>
+</section>
 
-        <article class="card">
-          <img src="https://via.placeholder.com/400x230?text=Slice+of+Life" alt="Manga cover">
-          <h3>Slice of Tea</h3>
-          <p>Short one-shots for chilled reading sessions.</p>
-          <div class="card-actions">
-            <a class="btn small" href="#">Read</a>
-            <a class="btn small outline" href="#">Download</a>
-          </div>
-        </article>
-      </div>
-    </section>
+<section id="order">
+  <h2>How to Order</h2>
+  <p>Order via Swiggy, Zomato, or WhatsApp.</p>
+</section>
 
-    <section class="cards container" id="anime">
-      <h2>Featured Anime</h2>
-      <div class="carousel" id="carousel">
-        <div class="slide active">
-          <img src="https://via.placeholder.com/900x300?text=Featured+Anime+1" alt="Featured anime">
-          <div class="slide-meta">
-            <h3>Celestial Knights — Episode 12</h3>
-            <p>Action & fantasy. New episode drops every Friday.</p>
-          </div>
-        </div>
+<section id="contact">
+  <h2>Contact Us</h2>
+  <p>📍 India</p>
+  <p>📞 +91-XXXXXXXXXX</p>
+  <p>📧 manavsols@email.com</p>
+</section>
 
-        <div class="slide">
-          <img src="https://via.placeholder.com/900x300?text=Featured+Anime+2" alt="Featured anime">
-          <div class="slide-meta">
-            <h3>Dreambound Tales — Season 1</h3>
-            <p>Romance & adventure. All episodes available to stream.</p>
-          </div>
-        </div>
+<footer>
+  <p>© 2025 Manav Sols. All Rights Reserved.</p>
+</footer>
 
-        <div class="carousel-controls">
-          <button id="prev">◀</button>
-          <button id="next">▶</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="about container" id="about">
-      <h2>About Ruby Eyes</h2>
-      <p>
-        Ruby Eyes is a fan-made hub for original manga and recommended anime. We celebrate colourful panels,
-        thrilling arcs and cosy slice-of-life moments. This site is a portfolio and a community corner — share feedback or report any issues.
-      </p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <strong>Ruby Eyes</strong>
-        <p>© <span id="year"></span> Ruby Eyes — All rights reserved.</p>
-      </div>
-      <div>
-        <strong>Quick Links</strong>
-        <nav class="footer-nav">
-          <a href="#manga">Manga</a>
-          <a href="#anime">Anime</a>
-          <a href="#about">About</a>
-        </nav>
-      </div>
-      <div>
-        <strong>Contact</strong>
-        <p><a href="mailto:rubyeyes@example.com">rubyeyes@example.com</a></p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
-            </html>
+</html>
