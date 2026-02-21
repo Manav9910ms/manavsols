@@ -1,4 +1,5 @@
-function orderNow() {
-  alert("Ordering feature coming soon!");
-  // Later you can connect WhatsApp or Swiggy link here
+function scrollToContact() {
+    document.getElementById("contact").scrollIntoView({
+        behavior: "smooth"
+    });
 }
