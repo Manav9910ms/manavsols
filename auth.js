@@ -1,7 +1,9 @@
 import { auth, db } from "./firebase.js";
+
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
@@ -9,49 +11,94 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+
 const registerBtn = document.getElementById("registerBtn");
 const loginBtn = document.getElementById("loginBtn");
 
-// REGISTER
+
+/* =========================
+   REGISTER SYSTEM
+========================= */
+
 if (registerBtn) {
+
   registerBtn.addEventListener("click", async () => {
 
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!name || !email || !password) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
 
     try {
+
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 🔐 Save user data in Firestore
+      // 🔐 Send Email Verification
+      await sendEmailVerification(user);
+
+      // 🔥 Save User in Firestore
       await setDoc(doc(db, "users", user.uid), {
         name: name,
         email: email,
         createdAt: new Date()
       });
 
-      alert("Account created successfully!");
-      window.location.href = "dashboard.html";
+      alert("Account created successfully! Please verify your email before logging in.");
+
+      window.location.href = "login.html";
 
     } catch (error) {
       alert(error.message);
     }
+
   });
+
 }
 
-// LOGIN
+
+/* =========================
+   LOGIN SYSTEM
+========================= */
+
 if (loginBtn) {
+
   loginBtn.addEventListener("click", async () => {
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+      alert("Please enter email and password.");
+      return;
+    }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 🚫 Block unverified users
+      if (!user.emailVerified) {
+        alert("Please verify your email before logging in.");
+        return;
+      }
+
       window.location.href = "dashboard.html";
+
     } catch (error) {
-      alert(error.message);
+      alert("Invalid email or password.");
     }
+
   });
+
 }
