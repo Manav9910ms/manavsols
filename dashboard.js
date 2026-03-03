@@ -8,7 +8,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "/login/";
   } else {
 
     const docRef = doc(db, "users", user.uid);
@@ -30,5 +30,5 @@ onAuthStateChanged(auth, async (user) => {
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "login.html";
+  window.location.href = "/login/";
 });
