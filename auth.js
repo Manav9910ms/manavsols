@@ -55,7 +55,7 @@ if (registerBtn) {
 
       alert("Account created successfully! Please verify your email before logging in.");
 
-      window.location.href = "login.html";
+      window.location.href = "/login/";
 
     } catch (error) {
       alert(error.message);
@@ -93,7 +93,7 @@ if (loginBtn) {
         return;
       }
 
-      window.location.href = "dashboard.html";
+      window.location.href = "/dashboard/";
 
     } catch (error) {
       alert("Invalid email or password.");
