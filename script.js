@@ -1,3 +1,7 @@
+import { db } from "./firebase.js";
+import { collection, addDoc, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 // Smooth scroll to contact
 function scrollContact() {
     document.getElementById("contact").scrollIntoView({
@@ -12,11 +16,6 @@ const nav = document.querySelector("nav");
 menuBtn.addEventListener("click", () => {
     nav.classList.toggle("show");
 });
-
-import { collection, addDoc, serverTimestamp } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import { db } from "./firebase.js";
 
 document.getElementById("serviceForm").addEventListener("submit", async (e) => {
 
