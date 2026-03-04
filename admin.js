@@ -1,0 +1,80 @@
+import { db } from "./firebase.js";
+
+import { 
+collection,
+getDocs,
+updateDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+const table = document.getElementById("requestsTable");
+
+async function loadRequests(){
+
+const snapshot = await getDocs(collection(db,"service_requests"));
+
+snapshot.forEach((request)=>{
+
+const data = request.data();
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+
+<td>${data.name}</td>
+<td>${data.email}</td>
+<td>${data.service}</td>
+<td>₹${data.budget}</td>
+
+<td>
+
+<select data-id="${request.id}" class="statusSelect">
+
+<option ${data.status=="Pending"?"selected":""}>Pending</option>
+<option ${data.status=="Working"?"selected":""}>Working</option>
+<option ${data.status=="Completed"?"selected":""}>Completed</option>
+
+</select>
+
+</td>
+
+<td>${data.trackingId}</td>
+
+`;
+
+table.appendChild(row);
+
+});
+
+
+listenStatusChange();
+
+}
+
+function listenStatusChange(){
+
+const selects = document.querySelectorAll(".statusSelect");
+
+selects.forEach(select=>{
+
+select.addEventListener("change", async ()=>{
+
+const id = select.dataset.id;
+
+const newStatus = select.value;
+
+await updateDoc(doc(db,"service_requests",id),{
+status:newStatus
+});
+
+alert("Status updated");
+
+});
+
+});
+
+}
+
+
+loadRequests();
