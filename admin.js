@@ -7,6 +7,24 @@ updateDoc,
 doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+import { auth } from "./firebase.js";
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+location.href="/login";
+return;
+}
+
+if(user.email !== "manav991077@gmail.com"){
+alert("Access Denied");
+location.href="/";
+}
+
+});
+
 
 const table = document.getElementById("requestsTable");
 
