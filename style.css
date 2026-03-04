@@ -383,3 +383,50 @@ footer {
   color: #ddd;
   margin-bottom: 8px;
 }
+
+.service-request {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #0e1a2b;
+    border-radius: 10px;
+}
+
+.service-request h2 {
+    color: #00eaff;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #111;
+    color: white;
+}
+
+button {
+    background: #00eaff;
+    color: black;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
