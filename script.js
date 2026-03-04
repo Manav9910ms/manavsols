@@ -1,7 +1,5 @@
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { collection, query, where, getDocs }
+import { collection, addDoc, serverTimestamp, query, where, getDocs }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 document.getElementById("serviceForm").addEventListener("submit", async (e) => {
