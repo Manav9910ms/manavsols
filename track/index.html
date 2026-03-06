@@ -8,7 +8,6 @@
 </head>
 
 <body>
-
 <section class="track-section">
 
 <div class="track-card">
@@ -19,29 +18,15 @@
 Enter your Tracking ID and Email to check the status of your request.
 </p>
 
-<div class="track-form">
+<input id="trackId" type="text" placeholder="Tracking ID (Example: MS-90275)">
 
-<input 
-type="text" 
-id="trackId" 
-placeholder="Tracking ID (Example: MS-90275)"
->
+<input id="trackEmail" type="email" placeholder="Your Email">
 
-<input 
-type="email" 
-id="trackEmail" 
-placeholder="Your Email"
->
-
-<button id="trackBtn">
-Track Request
-</button>
+<button id="trackBtn">Track Request</button>
 
 </div>
 
 <div id="trackResult"></div>
-
-</div>
 
 </section>
 <script type="module" src="/script.js"></script>
