@@ -11,10 +11,6 @@ import { auth } from "./firebase.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-function showDescription(desc){
-alert(desc);
-}
-
 onAuthStateChanged(auth,(user)=>{
 
 if(!user){
@@ -62,6 +58,7 @@ row.innerHTML = `
 </td>
 
 <td>${data.trackingId}</td>
+
 <td class="desc-cell" data-desc="${data.description}">
 ${data.description.slice(0,40)}...
 </td>
@@ -71,7 +68,6 @@ ${data.description.slice(0,40)}...
 table.appendChild(row);
 
 });
-
 
 listenStatusChange();
 
@@ -99,7 +95,11 @@ alert("Status updated");
 
 });
 
-document.addEventListener("click", function(e){
+}
+
+
+// 🔥 DESCRIPTION CLICK EVENT (GLOBAL)
+document.addEventListener("click",(e)=>{
 
 if(e.target.classList.contains("desc-cell")){
 
@@ -110,8 +110,6 @@ alert(desc);
 }
 
 });
-
-}
 
 
 loadRequests();
