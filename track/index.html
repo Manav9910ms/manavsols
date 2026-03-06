@@ -9,18 +9,39 @@
 
 <body>
 
-<section class="track-request">
+<section class="track-section">
+
+<div class="track-card">
 
 <h2>Track Your Request</h2>
-<p>Enter your Tracking ID and Email to check request status.</p>
 
-<input type="text" id="trackId" placeholder="Tracking ID (Example: MS-90275)">
+<p class="track-desc">
+Enter your Tracking ID and Email to check the status of your request.
+</p>
 
-<input type="email" id="trackEmail" placeholder="Your Email">
+<div class="track-form">
 
-<button id="trackBtn">Track Request</button>
+<input 
+type="text" 
+id="trackId" 
+placeholder="Tracking ID (Example: MS-90275)"
+>
+
+<input 
+type="email" 
+id="trackEmail" 
+placeholder="Your Email"
+>
+
+<button onclick="trackRequest()">
+Track Request
+</button>
+
+</div>
 
 <div id="trackResult"></div>
+
+</div>
 
 </section>
 <script type="module" src="/script.js"></script>
