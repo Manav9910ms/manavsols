@@ -11,6 +11,10 @@ import { auth } from "./firebase.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+function viewRequest(desc){
+alert(desc);
+}
+
 onAuthStateChanged(auth,(user)=>{
 
 if(!user){
@@ -58,8 +62,11 @@ row.innerHTML = `
 </td>
 
 <td>${data.trackingId}</td>
-<td title="${data.description}">
-${data.description.slice(0,40)}...
+<td>${data.description.slice(0,30)}...</td>
+<td>
+<button onclick="viewRequest('${data.description}')">
+View
+</button>
 </td>
 
 `;
