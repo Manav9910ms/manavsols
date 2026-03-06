@@ -42,6 +42,7 @@ row.innerHTML = `
 
 <td>${data.name}</td>
 <td>${data.email}</td>
+<td>${data.mobile}</td>
 <td>${data.service}</td>
 <td>₹${data.budget}</td>
 
