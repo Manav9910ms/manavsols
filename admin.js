@@ -11,7 +11,7 @@ import { auth } from "./firebase.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-function viewRequest(desc){
+function showDescription(desc){
 alert(desc);
 }
 
@@ -62,11 +62,9 @@ row.innerHTML = `
 </td>
 
 <td>${data.trackingId}</td>
-<td>${data.description.slice(0,30)}...</td>
-<td>
-<button onclick="viewRequest('${data.description}')">
-View
-</button>
+<td onclick="showDescription('${data.description.replace(/'/g,"\\'")}')" 
+style="cursor:pointer;color:#19d3e0;">
+${data.description.slice(0,40)}...
 </td>
 
 `;
