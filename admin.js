@@ -62,8 +62,7 @@ row.innerHTML = `
 </td>
 
 <td>${data.trackingId}</td>
-<td onclick="showDescription('${data.description.replace(/'/g,"\\'")}')" 
-style="cursor:pointer;color:#19d3e0;">
+<td class="desc-cell" data-desc="${data.description}">
 ${data.description.slice(0,40)}...
 </td>
 
@@ -97,6 +96,18 @@ status:newStatus
 alert("Status updated");
 
 });
+
+});
+
+document.addEventListener("click", function(e){
+
+if(e.target.classList.contains("desc-cell")){
+
+const desc = e.target.getAttribute("data-desc");
+
+alert(desc);
+
+}
 
 });
 
