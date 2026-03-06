@@ -58,6 +58,9 @@ row.innerHTML = `
 </td>
 
 <td>${data.trackingId}</td>
+<td title="${data.description}">
+${data.description.slice(0,40)}...
+</td>
 
 `;
 
