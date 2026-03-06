@@ -27,6 +27,10 @@ Some projects shown or planned under MANAV SOLS:
 * HTML
 * CSS
 * JavaScript
+* Firebase Authentication
+* Firestore Database
+* GitHub Hosting
+* Google Analytics
 
 ## 🎯 Goal
 
