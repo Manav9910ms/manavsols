@@ -17,8 +17,8 @@ This website works as my **online portfolio**, project hub, and identity as a de
 
 Some projects shown or planned under MANAV SOLS:
 
-* 🎮 **Manamons World** — A 3D monster training & battle game (in development)
-* 🤖 **AI Chan** — Virtual desktop assistant (in development)
+* 🎮 **MS Connect** — A chat and calling and connecting together web app (in development)
+* 🤖 **AI Chan** — Virtual desktop assistant
 * 🌐 **MANAV SOLS Website** — Personal brand & portfolio
 * 📂 Other experimental and learning projects
 
