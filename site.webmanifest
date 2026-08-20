@@ -1,0 +1,16 @@
+{
+  "name": "MANAV SOLS",
+  "short_name": "MANAV SOLS",
+  "description": "Source of Limitless Skills — digital solutions by Manav Singh.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
+  "icons": [
+    {
+      "src": "/assets/icon/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
