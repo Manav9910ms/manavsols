@@ -1,76 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<title>MANAV SOLS Admin</title>
-
-<link rel="stylesheet" href="style.css">
-
-<style>
-
-.admin-container{
-max-width:1000px;
-margin:auto;
-padding:40px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:30px;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid #444;
-text-align:left;
-}
-
-select{
-padding:6px;
-}
-
-td{
-max-width:200px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
+  <title>Admin | MANAV SOLS</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
-
-<body>
-
-<div class="admin-container">
-
-<h1>MANAV SOLS Admin Panel</h1>
-
-<table>
-
-<thead>
-
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Mobile</th>
-<th>Service</th>
-<th>Budget</th>
-<th>Status</th>
-<th>Tracking</th>
-<th>Description</th>
-</tr>
-
-</thead>
-
-<tbody id="requestsTable"></tbody>
-
-</table>
-
-</div>
-
-<script type="module" src="admin.js"></script>
-
+<body class="admin-page">
+  <main class="admin-panel">
+    <h1>MANAV SOLS Admin Panel</h1>
+    <p id="adminMessage" class="form-message" aria-live="polite"></p>
+    <div class="admin-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Mobile</th><th>Service</th>
+            <th>Budget</th><th>Status</th><th>Tracking</th><th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="requestsTable"></tbody>
+      </table>
+    </div>
+  </main>
+  <script type="module" src="/admin.js"></script>
 </body>
 </html>
