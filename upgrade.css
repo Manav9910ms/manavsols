@@ -1,0 +1,220 @@
+/* MANAV SOLS Website Upgrade
+   Layered visual refresh. Loaded after style.css so existing pages stay stable. */
+
+:root {
+  --upgrade-glow: rgba(0, 217, 255, 0.18);
+  --upgrade-glow-soft: rgba(0, 217, 255, 0.08);
+  --upgrade-panel: rgba(12, 19, 30, 0.78);
+}
+
+body {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(0, 217, 255, 0.07), transparent 28%),
+    radial-gradient(circle at 85% 8%, rgba(115, 0, 255, 0.06), transparent 25%),
+    #05080d;
+}
+
+.navbar {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  background: rgba(5, 8, 13, 0.78);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.logo {
+  font-size: 22px;
+  text-shadow: 0 0 24px var(--upgrade-glow);
+}
+
+nav a {
+  position: relative;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .25s ease;
+}
+
+nav a:hover::after,
+nav a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.hero {
+  min-height: min(790px, calc(100vh - 70px));
+  padding-top: 110px;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 760px;
+  height: 760px;
+  border: 1px solid rgba(0, 217, 255, 0.07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 120px rgba(0, 217, 255, 0.05),
+    inset 0 0 120px rgba(0, 217, 255, 0.03);
+  pointer-events: none;
+}
+
+.hero-content {
+  max-width: 900px;
+}
+
+.hero h1 {
+  font-size: clamp(52px, 9vw, 92px);
+  text-shadow: 0 0 35px rgba(0, 217, 255, 0.16);
+}
+
+.hero h2 {
+  font-weight: 650;
+}
+
+.hero p {
+  max-width: 760px;
+  color: #bfc9d4;
+}
+
+.hero-buttons .btn {
+  min-height: 48px;
+  padding-inline: 22px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.hero-buttons .primary {
+  box-shadow: 0 10px 30px rgba(0, 217, 255, 0.18);
+}
+
+.section {
+  padding-top: 86px;
+  padding-bottom: 86px;
+}
+
+.section > h2 {
+  font-weight: 760;
+}
+
+.about-card,
+.cards .card,
+.contact-card {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.about-card,
+.cards .card {
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.about-card:hover,
+.cards .card:hover,
+.contact-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(0, 217, 255, 0.34);
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.32),
+    0 0 28px rgba(0, 217, 255, 0.05);
+}
+
+.service-card {
+  min-height: 225px;
+}
+
+.service-card i,
+.sample-icon,
+.contact-card i {
+  filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.2));
+}
+
+.sample-card {
+  min-height: 295px;
+}
+
+.sample-card .btn,
+.card .btn {
+  position: relative;
+  z-index: 2;
+}
+
+.github-product-btn {
+  vertical-align: middle;
+  margin-left: 4px;
+  box-shadow: 0 8px 20px rgba(0, 217, 255, 0.07);
+}
+
+.contact-grid {
+  gap: 18px;
+}
+
+.contact-card {
+  background: linear-gradient(145deg, rgba(17, 27, 41, 0.9), rgba(10, 16, 25, 0.92));
+}
+
+footer {
+  background:
+    linear-gradient(180deg, rgba(8, 12, 19, 0.95), #05080d),
+    #05080d;
+}
+
+@media (max-width: 920px) {
+  .contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 90px;
+    padding-bottom: 100px;
+  }
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    padding-inline: 16px;
+  }
+
+  .hero h1 {
+    letter-spacing: -2px;
+  }
+
+  .hero p {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .section {
+    padding: 72px 18px;
+  }
+
+  .cards,
+  .about-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+    max-width: 360px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
