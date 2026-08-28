@@ -1,18 +1,18 @@
 # 🌐 MANAV SOLS
 
-**MANAV SOLS** is the personal technology brand and portfolio of **Manav Singh**, focused on practical digital solutions, modern websites and independent products.
+**MANAV SOLS** is an independent **digital solutions brand and technology services platform** founded by **Manav Singh**. It provides practical web development, software, automation and custom technology solutions for businesses, professionals, startups and other real-world needs.
 
 ## 🚀 What MANAV SOLS Does
 
-- Web development
-- AI & automation concepts
-- Technical solutions
+- Web development and website design
+- AI & automation solutions
+- Technical systems and integrations
 - Custom software projects
 - Digital product development
 
-## 🧩 Products
+## 🧩 Products & Projects
 
-- **MANAV SOLS Website** — official brand website
+- **MANAV SOLS Website** — official digital solutions and technology services platform
 - **MS Connect** — multi-user real-time chat system
 - **mCloud Offline** — offline local file-sharing concept
 - **AI Chan** — virtual desktop assistant concept
@@ -28,7 +28,7 @@
 ## 📁 Repository Structure
 
 ```text
-index.html             Public homepage
+index.html             Public homepage and organization entity markup
 style.css              Shared design system
 script.js              Shared navigation logic
 request/               Service-request page and Firestore submission logic
@@ -43,8 +43,8 @@ firestore.rules        Firestore security rules
 robots.txt              Crawler policy
 sitemap.xml             Public-page sitemap
 404.html                GitHub Pages error page
-site.webmanifest        Web app metadata
-assets/icon/favicon.svg Lightweight site favicon
+site.webmanifest        Web app and brand metadata
+assets/icon/favicon.svg Brand favicon and logo asset
 ```
 
 ## 🔐 Security Notes
@@ -59,6 +59,10 @@ The public website is designed for GitHub Pages with the custom domain:
 
 `https://manavsols.com`
 
-## 📌 Status
+## 📌 Brand Positioning
 
-The repository is actively maintained and optimized for the current MANAV SOLS public website plus its request, tracking and account systems.
+**MANAV SOLS** operates as an independent technology services brand and digital solutions platform. The website is the primary public entity page, with structured organization data connecting the brand to its founder and official social profiles.
+
+## 📈 Status
+
+The repository is actively maintained and optimized for the MANAV SOLS public website, service offerings, digital products and customer systems.
