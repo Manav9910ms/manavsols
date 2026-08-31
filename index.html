@@ -7,6 +7,16 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#070b12">
   <link rel="canonical" href="https://manavsols.com/">
+  <link rel="alternate" hreflang="en-IN" href="https://manavsols.com/">
+  <link rel="alternate" hreflang="hi" href="https://manavsols.com/hi/">
+  <link rel="alternate" hreflang="tr" href="https://manavsols.com/tr/">
+  <link rel="alternate" hreflang="vi" href="https://manavsols.com/vi/">
+  <link rel="alternate" hreflang="es" href="https://manavsols.com/es/">
+  <link rel="alternate" hreflang="ru" href="https://manavsols.com/ru/">
+  <link rel="alternate" hreflang="id" href="https://manavsols.com/id/">
+  <link rel="alternate" hreflang="de" href="https://manavsols.com/de/">
+  <link rel="alternate" hreflang="fr" href="https://manavsols.com/fr/">
+  <link rel="alternate" hreflang="x-default" href="https://manavsols.com/">
   <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
   <link rel="manifest" href="/site.webmanifest">
   <meta property="og:type" content="website">
@@ -61,6 +71,7 @@
 
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/upgrade.css">
+  <link rel="stylesheet" href="/language-ui.css">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -89,27 +100,8 @@
         <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
       </ul>
     </nav>
-    <div class="language-tools">
-      <button class="language-button" id="languageBtn" type="button" aria-haspopup="dialog" aria-controls="languageModal" aria-label="Change language">
-        <i class="fa-solid fa-globe" aria-hidden="true"></i>
-        <span id="currentLanguageLabel">English</span>
-      </button>
-    </div>
     <button class="menu-toggle" id="menuBtn" type="button" aria-label="Open navigation" aria-controls="main-navigation" aria-expanded="false">☰</button>
   </header>
-
-  <div class="language-modal" id="languageModal" aria-hidden="true">
-    <div class="language-backdrop" data-close-language></div>
-    <div class="language-dialog" role="dialog" aria-modal="true" aria-labelledby="languageTitle">
-      <button class="language-close" id="languageClose" type="button" aria-label="Close language selector">×</button>
-      <div class="language-icon"><i class="fa-solid fa-language" aria-hidden="true"></i></div>
-      <h2 id="languageTitle">Choose your language</h2>
-      <p id="languageSubtitle">Select a language for the best experience.</p>
-      <select id="languageSelect" aria-label="Select language"></select>
-      <button class="btn primary language-continue" id="languageContinue" type="button">Continue</button>
-      <p class="language-detected" id="languageDetected"></p>
-    </div>
-  </div>
 
   <main>
     <section id="home" class="hero" aria-labelledby="hero-title">
@@ -186,6 +178,7 @@
     <p class="footer-link"><a href="https://manavsols.com">www.manavsols.com</a></p>
   </footer>
 
+  <script src="/language-ui.js"></script>
   <script src="/script.js" defer></script>
 </body>
 </html>
