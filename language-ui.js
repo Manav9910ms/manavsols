@@ -17,6 +17,17 @@
   };
   function meta(name,content,property){let el=document.head.querySelector(property?`meta[property="${name}"]`:`meta[name="${name}"]`);if(!el){el=document.createElement('meta');(property?el.setAttribute('property',name):el.setAttribute('name',name));document.head.appendChild(el)}el.setAttribute('content',content)}
   function applySeo(code){const s=seo[code]||seo.en;document.title=s.title;meta('description',s.description);meta('keywords',s.keywords.join(', '));meta('author','MANAV SOLS');meta('robots','index, follow');meta('og:title',s.title,true);meta('og:description',s.description,true);meta('og:type','website',true);meta('og:url',location.href.split('#')[0],true);meta('og:site_name','MANAV SOLS',true);meta('twitter:card','summary');meta('twitter:title',s.title);meta('twitter:description',s.description);}
+  function addTermsLink(){
+    const footer=document.querySelector('footer');
+    if(!footer)return;
+    const existing=footer.querySelector('a[href="/terms/"]');
+    if(existing)return;
+    let line=footer.querySelector('.footer-link');
+    if(!line){line=document.createElement('p');line.className='footer-link';footer.appendChild(line)}
+    const link=document.createElement('a');link.href='/terms/';link.textContent='Terms & Conditions';
+    if(line.textContent.trim())line.appendChild(document.createTextNode(' · '));
+    line.appendChild(link);
+  }
   function add(){const nav=document.querySelector('.navbar');if(!nav)return;if(!document.getElementById('languageBtn')){const tools=document.createElement('div');tools.className='language-tools';tools.innerHTML='<button class="language-button" id="languageBtn" type="button" aria-haspopup="dialog" aria-controls="languageModal" aria-label="Change language"><i class="fa-solid fa-globe" aria-hidden="true"></i><span id="currentLanguageLabel">English</span></button>';nav.appendChild(tools)}if(!document.getElementById('languageModal')){const modal=document.createElement('div');modal.className='language-modal';modal.id='languageModal';modal.setAttribute('aria-hidden','true');modal.innerHTML='<div class="language-backdrop" data-close-language></div><div class="language-dialog" role="dialog" aria-modal="true" aria-labelledby="languageTitle"><button class="language-close" id="languageClose" type="button" aria-label="Close language selector">×</button><div class="language-icon"><i class="fa-solid fa-language" aria-hidden="true"></i></div><h2 id="languageTitle">Choose your language</h2><p id="languageSubtitle">Select a language for the best experience.</p><select id="languageSelect" aria-label="Select language"></select><button class="btn primary language-continue" id="languageContinue" type="button">Continue</button><p class="language-detected" id="languageDetected"></p></div></div>';document.body.appendChild(modal)}}
   function go(code){localStorage.setItem('manavsols-language',code);localStorage.setItem('manavsols-language-selected','1');location.href=languages[code].path}
   function setup(){add();const code=current(),saved=localStorage.getItem('manavsols-language');const suggested=saved&&languages[saved]?saved:detect();if(code==='en'&&/-in$/.test((navigator.language||'').toLowerCase()))localStorage.setItem('manavsols-language','en');
@@ -25,7 +36,7 @@
     function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('language-open')}
     function openModal(initial){modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('language-open');sel.value=initial||code;paint(sel.value);if(det&&initial)det.textContent=(texts[sel.value]||texts.en)[3]+': '+languages[sel.value].name}
     if(btn)btn.onclick=()=>openModal(code);if(close)close.onclick=closeModal;if(cont)cont.onclick=()=>go(sel.value);if(sel)sel.onchange=()=>paint(sel.value);document.querySelectorAll('[data-close-language]').forEach(e=>e.onclick=closeModal);document.onkeydown=e=>{if(e.key==='Escape')closeModal()};
-    applySeo(code);
+    applySeo(code);addTermsLink();
     if(!localStorage.getItem('manavsols-language-selected'))setTimeout(()=>openModal(suggested),450);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
