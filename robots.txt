@@ -4,5 +4,7 @@ Disallow: /admin.html
 Disallow: /dashboard/
 Disallow: /login/
 Disallow: /register/
+Disallow: /request/
+Disallow: /track/
 
 Sitemap: https://manavsols.com/sitemap.xml
