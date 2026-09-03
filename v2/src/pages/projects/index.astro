@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import { projects } from "../../data/site";
+---
+
+<BaseLayout title="Projects | MANAV SOLS" description="Projects, products and experiments built by MANAV SOLS.">
+  <section class="section container">
+    <SectionHeading eyebrow="Projects" title="Selected work" description="Project metadata stays in the data layer so the UI can evolve independently." />
+    <div class="card-grid">
+      {projects.map((project) => (
+        <article class="card">
+          <p class="tag">{project.category}</p>
+          <h2>{project.title}</h2>
+          <p>{project.description}</p>
+          <a href={`/projects/${project.slug}/`}>View project →</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
