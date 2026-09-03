@@ -11,5 +11,5 @@ export function getStaticPaths() {
 const { locale } = Astro.props;
 ---
 <BaseLayout lang={locale.lang} title={`${site.name} | ${locale.name}`} description={site.description}>
-  <HomePage />
+  <HomePage locale={locale.code} />
 </BaseLayout>
