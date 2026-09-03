@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import { services } from "../../data/site";
+---
+
+<BaseLayout title="Services | MANAV SOLS" description="Web development, AI automation, custom software and technical solutions by MANAV SOLS.">
+  <section class="section container">
+    <SectionHeading eyebrow="Services" title="Choose the solution you need" description="Each service is structured as an independent feature so we can expand it without rewriting the rest of the site." />
+    <div class="card-grid">
+      {services.map((service) => (
+        <article class="card">
+          <p class="card-index">SERVICE</p>
+          <h2>{service.title}</h2>
+          <p>{service.description}</p>
+          <a href={`/services/${service.slug}/`}>Learn more →</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
