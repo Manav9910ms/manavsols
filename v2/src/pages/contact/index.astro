@@ -1,15 +1,26 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeading from "../../components/SectionHeading.astro";
----
+import { site } from "../../data/site";
 
-<BaseLayout title="Contact | MANAV SOLS" description="Contact MANAV SOLS for websites, software, automation and custom technology projects.">
-  <section class="section container contact-page">
-    <SectionHeading eyebrow="Start a project" title="Tell us what you want to build" description="This will become the entry point for the future quote and project-request system." />
+const whatsappUrl = `https://wa.me/${site.phone.replace(/\D/g, "")}?text=${encodeURIComponent("Hi Manav, I would like to discuss a project with MANAV SOLS.")}`;
+---
+<BaseLayout title="Contact" description="Contact MANAV SOLS for websites, software, automation and custom technology projects.">
+  <section class="detail-page container">
+    <SectionHeading eyebrow="Start a project" title="Tell us what you want to build." description="Share the requirement, the problem or even the rough idea. The future request system will turn this into a structured project intake flow." />
     <div class="contact-options">
-      <a class="contact-option" href="https://wa.me/918376882879" target="_blank" rel="noopener noreferrer"><strong>WhatsApp</strong><span>Fast project discussion</span></a>
-      <a class="contact-option" href="mailto:manavsolszzz@gmail.com"><strong>Email</strong><span>Detailed requirements</span></a>
-      <a class="contact-option" href="tel:+918376882879"><strong>Call</strong><span>Direct conversation</span></a>
+      <a class="contact-option" href={whatsappUrl} target="_blank" rel="noopener noreferrer"><strong>WhatsApp</strong><span>Fast project discussion</span></a>
+      <a class="contact-option" href={`mailto:${site.email}`}><strong>Email</strong><span>{site.email}</span></a>
+      <a class="contact-option" href={`tel:${site.phone.replace(/\s+/g, "")}`}><strong>Call</strong><span>{site.phone}</span></a>
+    </div>
+    <div class="detail-panel">
+      <h2>What to send</h2>
+      <ul>
+        <li>What you need built or improved</li>
+        <li>Your business or project type</li>
+        <li>Important features or examples</li>
+        <li>Your preferred timeline, if you have one</li>
+      </ul>
     </div>
   </section>
 </BaseLayout>
