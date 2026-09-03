@@ -2,13 +2,14 @@
 import { site } from "../data/site";
 import { locales } from "../data/locales";
 
-const currentLocale = locales.find((item) => Astro.url.pathname === item.path)?.code ?? "en";
+const isEnglish = Astro.url.pathname === "/" || Astro.url.pathname === "/en/";
+const currentLocale = isEnglish ? "en" : locales.find((item) => Astro.url.pathname === item.path)?.code ?? "en";
 const currentLanguage = currentLocale === "en" ? "English" : locales.find((item) => item.code === currentLocale)?.name ?? "English";
 const flags: Record<string, string> = { en: "🇬🇧", ru: "🇷🇺", de: "🇩🇪", fr: "🇫🇷", es: "🇪🇸", tr: "🇹🇷", vi: "🇻🇳", id: "🇮🇩", hi: "🇮🇳" };
 ---
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href={currentLocale === "en" ? "/" : `/${currentLocale}/`} aria-label="MANAV SOLS home">
+    <a class="brand" href={currentLocale === "en" ? "/en/" : `/${currentLocale}/`} aria-label="MANAV SOLS home">
       <span class="brand-mark">M</span><span>{site.name}</span>
     </a>
     <nav class="desktop-nav" aria-label="Primary navigation">
@@ -17,7 +18,7 @@ const flags: Record<string, string> = { en: "🇬🇧", ru: "🇷🇺", de: "�
     <details class="language-picker">
       <summary aria-label="Change language">🌐 {currentLanguage}</summary>
       <div class="language-menu">
-        <a href="/" class:list={{ active: currentLocale === "en" }}>{flags.en} English</a>
+        <a href="/en/" class:list={{ active: currentLocale === "en" }}>{flags.en} English</a>
         {locales.map((locale) => <a href={locale.path} class:list={{ active: currentLocale === locale.code }}>{flags[locale.code]} {locale.name}</a>)}
       </div>
     </details>
