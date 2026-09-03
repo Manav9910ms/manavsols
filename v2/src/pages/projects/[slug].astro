@@ -3,24 +3,23 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { projects } from "../../data/site";
 
 export function getStaticPaths() {
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project }
-  }));
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
 }
 
 const { project } = Astro.props;
 ---
-
-<BaseLayout title={`${project.title} | MANAV SOLS`} description={project.description}>
-  <section class="section container detail-page">
-    <p class="eyebrow">{project.category}</p>
+<BaseLayout title={project.title} description={project.description}>
+  <section class="detail-page container">
+    <p class="eyebrow">{project.category} · {project.year}</p>
     <h1>{project.title}</h1>
     <p class="lead">{project.description}</p>
     <div class="detail-panel">
-      <h2>Project space</h2>
-      <p>This page is reserved for screenshots, live demo links, technology details, product status and project-specific information.</p>
-      <a class="button primary" href="/contact/">Build something similar</a>
+      <h2>Technology</h2>
+      <p>{project.stack.join(" · ")}</p>
+      <div class="actions">
+        <a class="button primary" href="/contact/">Discuss a similar project</a>
+        <a class="button secondary" href="/projects/">Back to projects</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
