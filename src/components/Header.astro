@@ -1,5 +1,9 @@
 ---
 import { site } from "../data/site";
+import { locales } from "../data/locales";
+
+const currentLocale = locales.find((item) => Astro.url.pathname === item.path)?.code ?? "en";
+const currentLanguage = currentLocale === "en" ? "English" : locales.find((item) => item.code === currentLocale)?.name ?? "English";
 ---
 <header class="site-header">
   <div class="container header-inner">
@@ -9,6 +13,13 @@ import { site } from "../data/site";
     <nav class="desktop-nav" aria-label="Primary navigation">
       {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
+    <details class="language-picker">
+      <summary aria-label="Change language">🌐 {currentLanguage}</summary>
+      <div class="language-menu">
+        <a href="/" class:list={{ active: currentLocale === "en" }}>🇬🇧 English</a>
+        {locales.map((locale) => <a href={locale.path} class:list={{ active: currentLocale === locale.code }}>{locale.flag} {locale.name}</a>)}
+      </div>
+    </details>
     <a class="header-cta" href="/contact/">Start a project</a>
     <details class="mobile-menu">
       <summary aria-label="Open navigation">Menu</summary>
