@@ -1,15 +1,18 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeading from "../../components/SectionHeading.astro";
+import { site, trustPoints } from "../../data/site";
 ---
-
-<BaseLayout title="About | MANAV SOLS" description="Learn about MANAV SOLS and its technology services platform.">
-  <section class="section container detail-page">
-    <SectionHeading eyebrow="About MANAV SOLS" title="A technology brand built around useful digital products" />
-    <p class="lead">MANAV SOLS is an independent digital solutions brand founded by Manav Singh, focused on websites, software, automation, AI-focused concepts and custom technology.</p>
+<BaseLayout title="About" description="Learn about MANAV SOLS and the principles behind its digital work.">
+  <section class="detail-page container">
+    <SectionHeading eyebrow="About MANAV SOLS" title="Small enough to stay focused. Structured enough to grow." description="MANAV SOLS is a technology-focused digital studio building useful websites, software and automation with a strong emphasis on clarity and maintainability." />
+    <div class="card-grid">
+      {trustPoints.map((point, index) => <article class="card"><p class="card-index">0{index + 1}</p><h2>{point}</h2><p>Part of the foundation we use when deciding what to build and how to ship it.</p></article>)}
+    </div>
     <div class="detail-panel">
-      <h2>Architecture first</h2>
-      <p>The new platform is being designed so public content, business tools, client features and admin tools can evolve independently while sharing one consistent design system.</p>
+      <h2>Work with us</h2>
+      <p>Projects can start from a business requirement, an existing website that needs improvement, or a completely new product idea.</p>
+      <div class="actions"><a class="button primary" href="/contact/">Start a conversation</a><a class="button secondary" href={`mailto:${site.email}`}>Email directly</a></div>
     </div>
   </section>
 </BaseLayout>
