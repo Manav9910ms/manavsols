@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HomePage from "../../components/HomePage.astro";
+import { locales } from "../../data/locales";
+import { site } from "../../data/site";
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale: locale.code }, props: { locale } }));
+}
+
+const { locale } = Astro.props;
+---
+<BaseLayout lang={locale.lang} title={`${site.name} | ${locale.name}`} description={site.description}>
+  <HomePage />
+</BaseLayout>
