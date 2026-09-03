@@ -1,53 +1,29 @@
 ---
 import { site } from "../data/site";
+import { locales } from "../data/locales";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 
-interface Props {
-  title?: string;
-  description?: string;
-  noindex?: boolean;
-}
-
-const { title = `${site.name} | ${site.tagline}`, description = site.description, noindex = false } = Astro.props;
+interface Props { title?: string; description?: string; noindex?: boolean; lang?: string; }
+const { title = `${site.name} | ${site.tagline}`, description = site.description, noindex = false, lang = "en-IN" } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+const alternates = [{ code: "en-IN", path: "/", lang: "en-IN" }, ...locales];
 ---
 <!doctype html>
-<html lang="en-IN">
+<html lang={lang}>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07090d" />
-    <meta name="description" content={description} />
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07090d" /><meta name="description" content={description} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:site_name" content={site.name} />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={fullTitle} />
-    <meta name="twitter:description" content={description} />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      name: site.name,
-      url: site.url,
-      email: site.email,
-      telephone: site.phone,
-      sameAs: site.social.map((item) => item.href),
-    })} />
+    <link rel="canonical" href={canonical} /><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><link rel="manifest" href="/site.webmanifest" />
+    {alternates.map((item) => <link rel="alternate" hreflang={item.lang} href={new URL(item.path, site.url).toString()} />)}
+    <link rel="alternate" hreflang="x-default" href={`${site.url}/`} />
+    <meta property="og:type" content="website" /><meta property="og:title" content={fullTitle} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} /><meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary" /><meta name="twitter:title" content={fullTitle} /><meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"Organization",name:site.name,url:site.url,email:site.email,telephone:site.phone,sameAs:site.social.map((item)=>item.href)})} />
     <title>{fullTitle}</title>
   </head>
-  <body>
-    <a class="skip-link" href="#content">Skip to content</a>
-    <Header />
-    <main id="content"><slot /></main>
-    <Footer />
-  </body>
+  <body><a class="skip-link" href="#content">Skip to content</a><Header /><main id="content"><slot /></main><Footer /></body>
 </html>
