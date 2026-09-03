@@ -1,33 +1,19 @@
 ---
 import { site } from "../data/site";
 import { locales } from "../data/locales";
-
-const isEnglish = Astro.url.pathname === "/" || Astro.url.pathname === "/en/";
-const currentLocale = isEnglish ? "en" : locales.find((item) => Astro.url.pathname === item.path)?.code ?? "en";
+import { ui } from "../data/translations";
+const first = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = (first && locales.some((item) => item.code === first) ? first : "en") as keyof typeof ui;
 const currentLanguage = currentLocale === "en" ? "English" : locales.find((item) => item.code === currentLocale)?.name ?? "English";
-const flags: Record<string, string> = { en: "🇬🇧", ru: "🇷🇺", de: "🇩🇪", fr: "🇫🇷", es: "🇪🇸", tr: "🇹🇷", vi: "🇻🇳", id: "🇮🇩", hi: "🇮🇳" };
+const flags: Record<string,string> = {en:"🇬🇧",ru:"🇷🇺",de:"🇩🇪",fr:"🇫🇷",es:"🇪🇸",tr:"🇹🇷",vi:"🇻🇳",id:"🇮🇩",hi:"🇮🇳"};
+const prefix = currentLocale === "en" ? "" : `/${currentLocale}`;
+const labels = ui[currentLocale];
+const links = [{label:labels.home,href:`${prefix}/`},{label:labels.services,href:`${prefix}/services/`},{label:labels.projects,href:`${prefix}/projects/`},{label:labels.pricing,href:`${prefix}/pricing/`},{label:labels.about,href:`${prefix}/about/`},{label:labels.contact,href:`${prefix}/contact/`}];
 ---
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href={currentLocale === "en" ? "/en/" : `/${currentLocale}/`} aria-label="MANAV SOLS home">
-      <span class="brand-mark">M</span><span>{site.name}</span>
-    </a>
-    <nav class="desktop-nav" aria-label="Primary navigation">
-      {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-    </nav>
-    <details class="language-picker">
-      <summary aria-label="Change language">🌐 {currentLanguage}</summary>
-      <div class="language-menu">
-        <a href="/en/" class:list={{ active: currentLocale === "en" }}>{flags.en} English</a>
-        {locales.map((locale) => <a href={locale.path} class:list={{ active: currentLocale === locale.code }}>{flags[locale.code]} {locale.name}</a>)}
-      </div>
-    </details>
-    <a class="header-cta" href="/contact/">Start a project</a>
-    <details class="mobile-menu">
-      <summary aria-label="Open navigation">Menu</summary>
-      <nav aria-label="Mobile navigation">
-        {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-      </nav>
-    </details>
-  </div>
-</header>
+<header class="site-header"><div class="container header-inner">
+<a class="brand" href={`${prefix}/`} aria-label="MANAV SOLS home"><span class="brand-mark">M</span><span>{site.name}</span></a>
+<nav class="desktop-nav" aria-label="Primary navigation">{links.map((item)=><a href={item.href}>{item.label}</a>)}</nav>
+<details class="language-picker"><summary aria-label={labels.language}>🌐 {currentLanguage}</summary><div class="language-menu"><a href="/">🇬🇧 English</a>{locales.map((locale)=><a href={`${locale.path}`} class:list={{active:currentLocale===locale.code}}>{flags[locale.code]} {locale.name}</a>)}</div></details>
+<a class="header-cta" href={`${prefix}/contact/`}>{labels.start}</a>
+<details class="mobile-menu"><summary aria-label="Open navigation">Menu</summary><nav aria-label="Mobile navigation">{links.map((item)=><a href={item.href}>{item.label}</a>)}</nav></details>
+</div></header>
