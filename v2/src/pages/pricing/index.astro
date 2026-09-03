@@ -2,14 +2,13 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeading from "../../components/SectionHeading.astro";
 ---
-
-<BaseLayout title="Pricing | MANAV SOLS" description="Clear website and technology service pricing from MANAV SOLS.">
-  <section class="section container">
-    <SectionHeading eyebrow="Pricing" title="Simple starting points" description="Pricing will later be connected to the quote engine, service options and project scope." />
+<BaseLayout title="Pricing" description="Simple starting points for website, business system and custom technology projects from MANAV SOLS.">
+  <section class="detail-page container">
+    <SectionHeading eyebrow="Pricing" title="Start with a clear scope, not a confusing menu." description="These are starting points. Final pricing depends on the actual pages, features, integrations and support required." />
     <div class="pricing-grid">
-      <article class="price-card"><span>Starter</span><h2>Website</h2><p>For professionals and small businesses that need a strong online presence.</p></article>
-      <article class="price-card featured"><span>Growth</span><h2>Business System</h2><p>Website plus integrations, automation and conversion-focused features.</p></article>
-      <article class="price-card"><span>Custom</span><h2>Technology Project</h2><p>For software, AI, automation or custom technical requirements.</p></article>
+      <article class="price-card"><span>Starter</span><h2>Website</h2><p class="price">Custom quote</p><p>For professionals and small businesses that need a credible, responsive online presence.</p><ul><li>Business pages</li><li>Mobile-first design</li><li>SEO-ready structure</li><li>Deployment</li></ul></article>
+      <article class="price-card featured"><span>Growth</span><h2>Business System</h2><p class="price">Custom quote</p><p>Website plus integrations, automation and conversion-focused features.</p><ul><li>Everything in Website</li><li>Forms & workflows</li><li>Analytics/integrations</li><li>Ongoing improvements</li></ul></article>
+      <article class="price-card"><span>Custom</span><h2>Technology Project</h2><p class="price">Custom quote</p><p>For software, AI, automation, dashboards, portals or other technical requirements.</p><ul><li>Requirement planning</li><li>Custom development</li><li>Database/auth when needed</li><li>Scalable architecture</li></ul></article>
     </div>
     <a class="button primary" href="/contact/">Get a project estimate</a>
   </section>
