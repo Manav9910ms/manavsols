@@ -5,7 +5,9 @@ import { copy } from "../data/copy";
 
 interface Props { locale?: string; }
 const { locale = "en" } = Astro.props;
-const t = locale === "ru" ? copy.ru : copy.en;
+const t = copy[locale as keyof typeof copy] ?? copy.en;
+const prefix = locale === "en" ? "" : `/${locale}`;
+const localized = (path: string) => `${prefix}${path}`;
 ---
 <section class="hero container">
   <div class="hero-copy">
@@ -13,8 +15,8 @@ const t = locale === "ru" ? copy.ru : copy.en;
     <h1>{t.heroTitle}</h1>
     <p class="lead">{t.heroLead}</p>
     <div class="actions">
-      <a class="button primary" href="/contact/">{t.start}</a>
-      <a class="button secondary" href="/services/">{t.explore}</a>
+      <a class="button primary" href={localized("/contact/")}>{t.start}</a>
+      <a class="button secondary" href={localized("/services/")}>{t.explore}</a>
     </div>
   </div>
 </section>
@@ -23,7 +25,7 @@ const t = locale === "ru" ? copy.ru : copy.en;
   <SectionHeading eyebrow={t.whatEyebrow} title={t.whatTitle} description={t.whatDesc} />
   <div class="card-grid">
     {services.map((service) => (
-      <article class="card"><p class="card-index">{service.number}</p><h3>{service.title}</h3><p>{service.description}</p><a href={`/services/${service.slug}/`}>{t.view}</a></article>
+      <article class="card"><p class="card-index">{service.number}</p><h3>{service.title}</h3><p>{service.description}</p><a href={localized(`/services/${service.slug}/`)}>{t.view}</a></article>
     ))}
   </div>
 </section>
@@ -39,7 +41,7 @@ const t = locale === "ru" ? copy.ru : copy.en;
   <SectionHeading eyebrow={t.workEyebrow} title={t.workTitle} description={t.workDesc} />
   <div class="card-grid">
     {projects.map((project) => (
-      <article class="card"><p class="tag">{project.category} · {project.year}</p><h3>{project.title}</h3><p>{project.description}</p><a href={`/projects/${project.slug}/`}>{t.viewProject}</a></article>
+      <article class="card"><p class="tag">{project.category} · {project.year}</p><h3>{project.title}</h3><p>{project.description}</p><a href={localized(`/projects/${project.slug}/`)}>{t.viewProject}</a></article>
     ))}
   </div>
 </section>
@@ -47,6 +49,6 @@ const t = locale === "ru" ? copy.ru : copy.en;
 <section class="section section-muted">
   <div class="container callout">
     <div><p class="eyebrow">{t.startEyebrow}</p><h2>{t.startTitle}</h2><p>{t.startDesc}</p></div>
-    <a class="button primary" href="/contact/">{t.tell}</a>
+    <a class="button primary" href={localized("/contact/")}>{t.tell}</a>
   </div>
 </section>
