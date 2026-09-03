@@ -1,13 +1,25 @@
+---
+import { site } from "../data/site";
+---
+
 <footer class="site-footer">
-  <div class="container footer-inner">
+  <div class="container footer-grid">
     <div>
-      <strong>MANAV SOLS</strong>
-      <p>Digital solutions & technology services.</p>
+      <a class="brand" href="/"><span class="brand-mark">M</span><span>{site.name}</span></a>
+      <p class="footer-copy">Websites, software and digital solutions built with purpose.</p>
     </div>
-    <div class="footer-links">
-      <a href="/privacy/">Privacy</a>
-      <a href="/terms/">Terms</a>
-      <a href="/contact/">Contact</a>
+    <div>
+      <p class="footer-label">Explore</p>
+      {site.navigation.slice(1, 5).map((item) => <a class="footer-link" href={item.href}>{item.label}</a>)}
     </div>
+    <div>
+      <p class="footer-label">Contact</p>
+      <a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a>
+      <a class="footer-link" href={`tel:${site.phone.replace(/\s+/g, "")}`}>{site.phone}</a>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span>
+    <span><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></span>
   </div>
 </footer>
