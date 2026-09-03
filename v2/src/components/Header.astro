@@ -4,8 +4,11 @@ import { site } from "../data/site";
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/" aria-label="MANAV SOLS home">{site.name}</a>
-    <nav aria-label="Primary navigation">
+    <a class="brand" href="/" aria-label="MANAV SOLS home">
+      <span class="brand-mark">M</span>
+      <span>{site.name}</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
       {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
     <a class="header-cta" href="/contact/">Start a project</a>
