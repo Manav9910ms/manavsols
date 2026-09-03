@@ -1,0 +1,8 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HomePage from "../../components/HomePage.astro";
+import { site } from "../../data/site";
+---
+<BaseLayout lang="en-IN" title={`${site.name} | English`} description={site.description} noindex={true}>
+  <HomePage locale="en" />
+</BaseLayout>
