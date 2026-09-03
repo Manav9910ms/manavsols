@@ -7,9 +7,18 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  eyebrow?: string;
+  noindex?: boolean;
 }
 
-const { title = site.name, description = site.description } = Astro.props;
+const {
+  title = `${site.name} | ${site.tagline}`,
+  description = site.description,
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.url).toString();
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
 ---
 
 <!doctype html>
@@ -17,17 +26,33 @@ const { title = site.name, description = site.description } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0d10" />
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={Astro.url} />
+    <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
     <link rel="icon" href="/assets/icon/favicon.svg" />
-    <title>{title}</title>
+    <title>{fullTitle}</title>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: site.name,
+      url: site.url,
+      email: site.email,
+      telephone: site.phone,
+    })} />
   </head>
   <body>
+    <a class="skip-link" href="#content">Skip to content</a>
     <Header />
-    <main>
-      <slot />
-    </main>
+    <main id="content"><slot /></main>
     <Footer />
   </body>
 </html>
