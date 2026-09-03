@@ -1,12 +1,14 @@
-# Features
+# Feature architecture
 
-Feature modules own business workflows rather than generic UI.
+Dynamic systems are intentionally separated from the public content layer.
 
-Planned feature areas:
+```text
+features/
+├── auth/       # sign-in, registration, password reset
+├── client/     # client dashboard, projects, requests, messages
+├── admin/      # leads, clients, projects, requests, analytics
+├── requests/   # project and website requirement intake
+└── quote/      # future quote builder
+```
 
-- quote — interactive website/project estimate builder
-- contact — lead capture and project request flow
-- auth — authentication and account lifecycle
-- client — client dashboard and project communication
-- admin — protected operations and lead/project management
-- ai — future AI assistant and AI-powered workflows
+Each feature should own its UI, validation and service calls instead of adding more logic to a global script. The public site remains static-first while these modules are added only where dynamic behavior is needed.
