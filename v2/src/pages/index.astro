@@ -1,28 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
-import { services, projects, site } from "../data/site";
+import { projects, services, site, trustPoints } from "../data/site";
 ---
 
-<BaseLayout title={`${site.name} | Digital Solutions & Technology Services`} description={site.description}>
+<BaseLayout title={`${site.name} | ${site.tagline}`} description={site.description}>
   <section class="hero container">
     <div class="hero-copy">
       <p class="eyebrow">{site.tagline}</p>
-      <h1>Technology that turns ideas into useful products.</h1>
-      <p class="lead">MANAV SOLS builds modern websites, digital products, automation and custom technology solutions for businesses, professionals and startups.</p>
+      <h1>Build a better digital presence.</h1>
+      <p class="lead">MANAV SOLS creates modern websites, software, automation and practical digital systems for businesses, professionals and ambitious ideas.</p>
       <div class="actions">
         <a class="button primary" href="/contact/">Start a project</a>
-        <a class="button secondary" href="/projects/">Explore projects</a>
+        <a class="button secondary" href="/services/">Explore services</a>
       </div>
     </div>
   </section>
 
-  <section class="section container" id="services">
-    <SectionHeading eyebrow="What we build" title="Digital services with a clear purpose" description="A focused service system that can grow without turning the codebase into one large file." />
+  <section class="section container">
+    <SectionHeading eyebrow="What we do" title="Focused technology, without unnecessary complexity." description="A modular service system means each project can stay simple at first and grow when it needs to." />
     <div class="card-grid">
       {services.map((service) => (
         <article class="card">
-          <p class="card-index">0{services.indexOf(service) + 1}</p>
+          <p class="card-index">{service.number}</p>
           <h3>{service.title}</h3>
           <p>{service.description}</p>
           <a href={`/services/${service.slug}/`}>View service →</a>
@@ -33,26 +33,35 @@ import { services, projects, site } from "../data/site";
 
   <section class="section section-muted">
     <div class="container">
-      <SectionHeading eyebrow="Selected work" title="Projects, products and experiments" description="Projects now live in data structures, while page components stay responsible for presentation." />
+      <SectionHeading eyebrow="Why MANAV SOLS" title="Built for real business outcomes." />
       <div class="card-grid">
-        {projects.map((project) => (
-          <article class="card">
-            <p class="tag">{project.category}</p>
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <a href={`/projects/${project.slug}/`}>Open project →</a>
-          </article>
-        ))}
+        {trustPoints.map((point) => <article class="card"><p class="card-index">✓</p><h3>{point}</h3></article>)}
       </div>
     </div>
   </section>
 
-  <section class="section container callout">
-    <div>
-      <p class="eyebrow">Next step</p>
-      <h2>Turn your idea into a clear project.</h2>
-      <p>We will build the quote system, project requests, client space and admin tools as separate features on top of this architecture.</p>
+  <section class="section container">
+    <SectionHeading eyebrow="Selected work" title="Projects and product experiments" description="A growing portfolio of websites, products and technical experiments." />
+    <div class="card-grid">
+      {projects.map((project) => (
+        <article class="card">
+          <p class="tag">{project.category} · {project.year}</p>
+          <h3>{project.title}</h3>
+          <p>{project.description}</p>
+          <a href={`/projects/${project.slug}/`}>Open project →</a>
+        </article>
+      ))}
     </div>
-    <a class="button primary" href="/contact/">Talk to MANAV SOLS</a>
+  </section>
+
+  <section class="section section-muted">
+    <div class="container callout">
+      <div>
+        <p class="eyebrow">Start here</p>
+        <h2>Have an idea, requirement or problem to solve?</h2>
+        <p>Share what you need. We can shape the requirement before deciding what should actually be built.</p>
+      </div>
+      <a class="button primary" href="/contact/">Tell us about it</a>
+    </div>
   </section>
 </BaseLayout>
