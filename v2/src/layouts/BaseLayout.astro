@@ -7,29 +7,24 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
-  eyebrow?: string;
   noindex?: boolean;
 }
 
-const {
-  title = `${site.name} | ${site.tagline}`,
-  description = site.description,
-  noindex = false,
-} = Astro.props;
-
+const { title = `${site.name} | ${site.tagline}`, description = site.description, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
 ---
-
 <!doctype html>
 <html lang="en-IN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0b0d10" />
+    <meta name="theme-color" content="#07090d" />
     <meta name="description" content={description} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -38,8 +33,6 @@ const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <link rel="icon" href="/assets/icon/favicon.svg" />
-    <title>{fullTitle}</title>
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Organization",
@@ -47,7 +40,9 @@ const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
       url: site.url,
       email: site.email,
       telephone: site.phone,
+      sameAs: site.social.map((item) => item.href),
     })} />
+    <title>{fullTitle}</title>
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
