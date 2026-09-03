@@ -42,12 +42,6 @@
       "has": [{"type": "header", "key": "x-vercel-ip-country", "value": {"inc": ["ID"]}}],
       "destination": "/id/",
       "permanent": false
-    },
-    {
-      "source": "/",
-      "has": [{"type": "header", "key": "x-vercel-ip-country", "value": {"inc": ["IN"]}}],
-      "destination": "/hi/",
-      "permanent": false
     }
   ]
 }
