@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import { locales } from "../../data/locales";
+import { ui, pageCopy } from "../../data/translations";
+import { services, projects, site, trustPoints } from "../../data/site";
+
+export function getStaticPaths() {
+  const paths = ["services", "projects", "pricing", "about", "contact", "privacy", "terms", ...services.map((s) => `services/${s.slug}`), ...projects.map((p) => `projects/${p.slug}`)];
+  return locales.flatMap((locale) => paths.map((slug) => ({ params: { locale: locale.code, slug }, props: { locale: locale.code, slug } })));
+}
+const { locale, slug } = Astro.props;
+const t = ui[locale as keyof typeof ui];
+const p = pageCopy[locale as keyof typeof pageCopy];
+const parts = slug.split("/");
+const section = parts[0];
+const detail = parts[1];
+const prefix = `/${locale}`;
+const service = section === "services" && detail ? services.find((item) => item.slug === detail) : null;
+const project = section === "projects" && detail ? projects.find((item) => item.slug === detail) : null;
+const title = service?.title || project?.title || p[`${section}Title`] || site.name;
+---
+<BaseLayout lang={locale} title={`${title} | ${locale.toUpperCase()}`} description={service?.description || project?.description || p[`${section}Desc`] || site.description}>
+  {section === "services" && !detail && <section class="detail-page container"><SectionHeading eyebrow={t.services} title={p.servicesTitle} description={p.servicesDesc} /><div class="card-grid">{services.map((item)=><article class="card"><p class="card-index">{item.number}</p><h2>{item.title}</h2><p>{item.description}</p><a href={`${prefix}/services/${item.slug}/`}>{t.view}</a></article>)}</div></section>}
+  {section === "projects" && !detail && <section class="detail-page container"><SectionHeading eyebrow={t.projects} title={p.projectsTitle} description={p.projectsDesc} /><div class="card-grid">{projects.map((item)=><article class="card"><p class="tag">{item.category} · {item.year}</p><h2>{item.title}</h2><p>{item.description}</p><a href={`${prefix}/projects/${item.slug}/`}>{t.open}</a></article>)}</div></section>}
+  {section === "pricing" && <section class="detail-page container"><SectionHeading eyebrow={t.pricing} title={p.pricingTitle} description={p.pricingDesc} /><div class="pricing-grid"><article class="price-card"><span>Starter</span><h2>Website</h2><p class="price">Custom quote</p><p>Responsive online presence for professionals and small businesses.</p><ul><li>Business pages</li><li>Mobile-first design</li><li>SEO-ready structure</li><li>Deployment</li></ul></article><article class="price-card featured"><span>Growth</span><h2>Business System</h2><p class="price">Custom quote</p><p>Website plus integrations, automation and conversion-focused features.</p><ul><li>Forms & workflows</li><li>Analytics/integrations</li><li>Ongoing improvements</li></ul></article><article class="price-card"><span>Custom</span><h2>Technology Project</h2><p class="price">Custom quote</p><p>Software, AI, automation, dashboards and portals.</p><ul><li>Requirement planning</li><li>Custom development</li><li>Database/auth when needed</li></ul></article></div><a class="button primary" href={`${prefix}/contact/`}>{t.start}</a></section>}
+  {section === "about" && <section class="detail-page container"><SectionHeading eyebrow={t.about} title={p.aboutTitle} description={p.aboutDesc} /><div class="card-grid">{trustPoints.map((point,index)=><article class="card"><p class="card-index">0{index+1}</p><h2>{point}</h2><p>Part of the foundation used when deciding what to build and how to ship it.</p></article>)}</div><div class="detail-panel"><h2>Work with us</h2><p>Projects can start from a business requirement, an existing website that needs improvement, or a completely new product idea.</p><a class="button primary" href={`${prefix}/contact/`}>{t.start}</a></div></section>}
+  {section === "contact" && <section class="detail-page container"><SectionHeading eyebrow={t.contact} title={p.contactTitle} description={p.contactDesc} /><div class="contact-options"><a class="contact-option" href={`https://wa.me/${site.phone.replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer"><strong>WhatsApp</strong><span>Fast project discussion</span></a><a class="contact-option" href={`mailto:${site.email}`}><strong>Email</strong><span>{site.email}</span></a><a class="contact-option" href={`tel:${site.phone.replace(/\s+/g,"")}`}><strong>Call</strong><span>{site.phone}</span></a></div></section>}
+  {section === "privacy" && <section class="detail-page container"><p class="eyebrow">Legal</p><h1>{p.privacyTitle}</h1><div class="detail-panel"><p>This page explains the privacy foundation for MANAV SOLS website visitors and future client systems. Public browsing does not require an account.</p></div></section>}
+  {section === "terms" && <section class="detail-page container"><p class="eyebrow">Legal</p><h1>{p.termsTitle}</h1><div class="detail-panel"><p>These terms provide the foundation for MANAV SOLS projects, including scope, delivery, payments, intellectual property, third-party services and support.</p></div></section>}
+  {service && <section class="detail-page container"><SectionHeading eyebrow={t.services} title={service.title} description={service.description} /><div class="detail-panel"><p>{service.details}</p><h2>Includes</h2><ul>{service.features.map((feature)=><li>{feature}</li>)}</ul><a class="button primary" href={`${prefix}/contact/`}>{t.start}</a></div></section>}
+  {project && <section class="detail-page container"><SectionHeading eyebrow={t.projects} title={project.title} description={project.description} /><div class="detail-panel"><p>Category: {project.category}</p><p>Year: {project.year}</p><h2>Technology</h2><p>{project.stack.join(" · ")}</p><a class="button primary" href={`${prefix}/contact/`}>{t.start}</a></div></section>}
+</BaseLayout>
