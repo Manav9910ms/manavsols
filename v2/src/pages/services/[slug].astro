@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { services } from "../../data/site";
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service }
+  }));
+}
+
+const { service } = Astro.props;
+---
+
+<BaseLayout title={`${service.title} | MANAV SOLS`} description={service.description}>
+  <section class="section container detail-page">
+    <p class="eyebrow">MANAV SOLS service</p>
+    <h1>{service.title}</h1>
+    <p class="lead">{service.description}</p>
+    <div class="detail-panel">
+      <h2>Built around your requirements</h2>
+      <p>This route is intentionally small. The detailed service content, process, FAQs, pricing logic and project CTA will live here instead of being mixed into the homepage.</p>
+      <a class="button primary" href="/contact/">Discuss this service</a>
+    </div>
+  </section>
+</BaseLayout>
