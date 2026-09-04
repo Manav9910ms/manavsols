@@ -16,7 +16,7 @@ const localized = (path: string) => `${prefix}${path}`;
       <h1>{t.heroTitle}</h1>
       <p class="lead">{t.heroLead}</p>
       <div class="actions">
-        <a class="button primary" href={localized("/contact/")}>{t.start}</a>
+        <a class="button primary" href={localized("/request/")}>{t.start}</a>
         <a class="button secondary" href={localized("/services/")}>{t.explore}</a>
       </div>
       <div class="hero-points" aria-label="Key benefits">
@@ -43,7 +43,7 @@ const localized = (path: string) => `${prefix}${path}`;
           <div class="package-head"><h2>{pkg.name}</h2><p>{pkg.subtitle}</p></div>
           <ul>{pkg.features.map((feature) => <li>✓ {feature}</li>)}</ul>
           <div class="package-price"><strong>{pkg.price}</strong><span>{pkg.note}</span></div>
-          <a href={localized("/contact/")}>Get started →</a>
+          <a href={localized("/request/")}>Get started →</a>
         </article>
       ))}
     </div>
@@ -60,7 +60,7 @@ const localized = (path: string) => `${prefix}${path}`;
           {plan.badge && <span class="package-badge">{plan.badge}</span>}
           <h2>{plan.name}</h2><p>{plan.subtitle}</p><div class="care-price"><strong>{plan.price}</strong><span>/month</span></div>
           <ul>{plan.features.map((feature) => <li>✓ {feature}</li>)}</ul>
-          <a href={localized("/contact/")}>Choose {plan.name} →</a>
+          <a href={localized("/request/")}>Choose {plan.name} →</a>
         </article>
       ))}
     </div>
@@ -90,6 +90,6 @@ const localized = (path: string) => `${prefix}${path}`;
 <section class="section cta-section">
   <div class="container cta-panel">
     <div><p class="eyebrow">{t.startEyebrow}</p><h2>{t.startTitle}</h2><p>{t.startDesc}</p></div>
-    <a class="button primary" href={localized("/contact/")}>{t.tell}</a>
+    <a class="button primary" href={localized("/request/")}>{t.tell}</a>
   </div>
 </section>
