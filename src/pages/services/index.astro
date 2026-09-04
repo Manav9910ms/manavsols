@@ -3,16 +3,20 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeading from "../../components/SectionHeading.astro";
 import { services } from "../../data/site";
 ---
-<BaseLayout title="Services" description="Web development, AI automation, custom software and technical solutions from MANAV SOLS.">
+<BaseLayout title="Services" description="Websites, web apps, SEO, hosting, maintenance and integrations from MANAV SOLS.">
   <section class="detail-page container">
-    <SectionHeading eyebrow="Services" title="Choose the solution your business actually needs." description="Start with the outcome. The technology comes after the requirement is clear." />
-    <div class="card-grid">
-      {services.map((service) => (
-        <article class="card">
-          <p class="card-index">{service.number}</p>
-          <h2>{service.title}</h2>
-          <p>{service.description}</p>
-          <a href={`/services/${service.slug}/`}>Explore {service.shortTitle} →</a>
+    <SectionHeading eyebrow="Our services" title="Complete digital solutions for your business." description="From your first website to custom software, visibility, hosting and long-term support, choose the service you actually need." />
+    <div class="service-grid">
+      {services.map((service, index) => (
+        <article class={`service-card service-tone-${(index % 6) + 1}`}>
+          <div class="service-icon">{["◎", "⌘", "↗", "▣", "◒", "✦"][index]}</div>
+          <div>
+            <p class="card-index">{service.number}</p>
+            <h2>{service.title}</h2>
+            <p>{service.description}</p>
+            <ul class="service-features">{service.features.slice(0, 5).map((feature) => <li>✓ {feature}</li>)}</ul>
+            <a href={`/services/${service.slug}/`}>Explore {service.shortTitle} →</a>
+          </div>
         </article>
       ))}
     </div>
