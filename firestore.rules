@@ -18,7 +18,7 @@ service cloud.firestore {
     match /service_requests/{requestId} {
       allow create: if request.resource.data.keys().hasOnly([
         'trackingId', 'name', 'email', 'mobile', 'service',
-        'budget', 'description', 'status', 'timestamp'
+        'package', 'budget', 'description', 'website', 'status', 'timestamp'
       ])
       && request.resource.data.status == 'Pending'
       && request.resource.data.trackingId is string
@@ -34,11 +34,15 @@ service cloud.firestore {
       && request.resource.data.mobile.size() <= 20
       && request.resource.data.service is string
       && request.resource.data.service.size() > 0
+      && request.resource.data.package is string
+      && request.resource.data.package.size() <= 100
       && request.resource.data.budget is string
       && request.resource.data.budget.size() <= 60
       && request.resource.data.description is string
       && request.resource.data.description.size() > 0
       && request.resource.data.description.size() <= 2000
+      && request.resource.data.website is string
+      && request.resource.data.website.size() <= 200
       && request.resource.data.timestamp is timestamp;
 
       allow get: if isAdmin() || request.auth == null;
