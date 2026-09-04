@@ -1,15 +1,39 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeading from "../../components/SectionHeading.astro";
+import { packages, carePlans } from "../../data/site";
 ---
-<BaseLayout title="Pricing" description="Simple starting points for website, business system and custom technology projects from MANAV SOLS.">
+<BaseLayout title="Pricing" description="Website packages and ongoing care plans from MANAV SOLS.">
   <section class="detail-page container">
-    <SectionHeading eyebrow="Pricing" title="Start with a clear scope, not a confusing menu." description="These are starting points. Final pricing depends on the actual pages, features, integrations and support required." />
-    <div class="pricing-grid">
-      <article class="price-card"><span>Starter</span><h2>Website</h2><p class="price">Custom quote</p><p>For professionals and small businesses that need a credible, responsive online presence.</p><ul><li>Business pages</li><li>Mobile-first design</li><li>SEO-ready structure</li><li>Deployment</li></ul></article>
-      <article class="price-card featured"><span>Growth</span><h2>Business System</h2><p class="price">Custom quote</p><p>Website plus integrations, automation and conversion-focused features.</p><ul><li>Everything in Website</li><li>Forms & workflows</li><li>Analytics/integrations</li><li>Ongoing improvements</li></ul></article>
-      <article class="price-card"><span>Custom</span><h2>Technology Project</h2><p class="price">Custom quote</p><p>For software, AI, automation, dashboards, portals or other technical requirements.</p><ul><li>Requirement planning</li><li>Custom development</li><li>Database/auth when needed</li><li>Scalable architecture</li></ul></article>
+    <SectionHeading eyebrow="Website packages" title="Professional websites with clear, upfront starting prices." description="Choose a package that fits your business today. Custom web apps and business software start from ₹39,999+." />
+    <div class="package-grid">
+      {packages.map((pkg) => (
+        <article class={`package-card tone-${pkg.tone}`}>
+          {pkg.badge && <span class="package-badge">{pkg.badge}</span>}
+          <div class="package-head"><h2>{pkg.name}</h2><p>{pkg.subtitle}</p></div>
+          <ul>{pkg.features.map((feature) => <li>✓ {feature}</li>)}</ul>
+          <div class="package-price"><strong>{pkg.price}</strong><span>{pkg.note}</span></div>
+          <a href="/contact/">Get started →</a>
+        </article>
+      ))}
     </div>
-    <a class="button primary" href="/contact/">Get a project estimate</a>
+    <div class="custom-strip"><strong>Need something custom?</strong> We build web applications & business software tailored to your needs. <b>Starting from ₹39,999+</b></div>
+  </section>
+
+  <section class="section care-section">
+    <div class="container">
+      <div class="section-heading center-heading"><p class="eyebrow">Website care plans</p><h2>Keep your website fast, secure & always online.</h2><p class="section-description">Choose ongoing maintenance and support after your website goes live.</p></div>
+      <div class="care-grid">
+        {carePlans.map((plan) => (
+          <article class={`care-card tone-${plan.tone}`}>
+            {plan.badge && <span class="package-badge">{plan.badge}</span>}
+            <h2>{plan.name}</h2><p>{plan.subtitle}</p>
+            <div class="care-price"><strong>{plan.price}</strong><span>/month</span></div>
+            <ul>{plan.features.map((feature) => <li>✓ {feature}</li>)}</ul>
+            <a href="/contact/">Choose {plan.name} →</a>
+          </article>
+        ))}
+      </div>
+    </div>
   </section>
 </BaseLayout>
