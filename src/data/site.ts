@@ -4,7 +4,7 @@ export const site = {
   tagline: "Websites, software & digital solutions",
   description: "MANAV SOLS creates modern websites, digital products, automation and custom technology solutions for businesses, professionals and startups.",
   url: "https://manavsols.com",
-  email: "manavsolszzz@gmail.com",
+  email: "manav@manavsols.com",
   phone: "+91 8376882879",
   navigation: [
     { label: "Home", href: "/" },
