@@ -1,0 +1,65 @@
+---
+interface Props { locale?: string; }
+const { locale = "en" } = Astro.props;
+const isHindi = locale === "hi";
+const isRussian = locale === "ru";
+const title = isHindi ? "अपने प्रोजेक्ट की जरूरत बताएं" : isRussian ? "Расскажите о вашем проекте" : "Tell us what you want to build";
+const lead = isHindi ? "अपनी जरूरत साझा करें। आपको और MANAV SOLS दोनों को तुरंत request receipt मिलेगी।" : isRussian ? "Опишите задачу. Квитанция заявки сразу будет отправлена вам и MANAV SOLS." : "Share the requirement. A request receipt will be sent to you and MANAV SOLS immediately.";
+const labels = isHindi
+  ? { name:"पूरा नाम", email:"ईमेल", mobile:"मोबाइल / WhatsApp", service:"सेवा", package:"पैकेज / प्लान", budget:"बजट", message:"आपकी जरूरत", website:"मौजूदा वेबसाइट (वैकल्पिक)", submit:"Request भेजें", sending:"भेजा जा रहा है..." }
+  : isRussian
+  ? { name:"Имя", email:"Email", mobile:"Телефон / WhatsApp", service:"Услуга", package:"Пакет / план", budget:"Бюджет", message:"Описание задачи", website:"Существующий сайт (необязательно)", submit:"Отправить заявку", sending:"Отправка..." }
+  : { name:"Full name", email:"Email address", mobile:"Mobile / WhatsApp", service:"Service", package:"Package / plan", budget:"Budget", message:"What do you need?", website:"Current website (optional)", submit:"Send request", sending:"Sending..." };
+const options = ["Website", "Web App / Software", "SEO & Online Visibility", "Hosting & Technical", "Maintenance & Support", "Integrations", "AI & Automation", "Custom Software", "Other"];
+const packages = ["Landing Page — ₹4,999", "Starter — ₹9,999", "Business — ₹14,999", "Professional — ₹24,999", "E-Commerce — ₹24,999+", "Basic Care — ₹999/month", "Pro Care — ₹1,999/month", "Premium Care — ₹3,999/month", "Custom — ₹39,999+"];
+---
+<section class="detail-page container request-page">
+  <div class="request-intro">
+    <p class="eyebrow">Start a project</p>
+    <h1>{title}</h1>
+    <p class="lead">{lead}</p>
+  </div>
+
+  <form class="request-form" id="request-form" novalidate>
+    <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <div class="form-grid">
+      <label>{labels.name}<input name="name" autocomplete="name" required maxlength="80" placeholder="Your name" /></label>
+      <label>{labels.email}<input type="email" name="email" autocomplete="email" required maxlength="120" placeholder="you@example.com" /></label>
+      <label>{labels.mobile}<input name="mobile" autocomplete="tel" required maxlength="20" placeholder="+91 ..." /></label>
+      <label>{labels.service}<select name="service" required><option value="">Select a service</option>{options.map((item)=><option>{item}</option>)}</select></label>
+      <label>{labels.package}<select name="package"><option value="">Select a package / plan</option>{packages.map((item)=><option>{item}</option>)}</select></label>
+      <label>{labels.budget}<input name="budget" maxlength="60" placeholder="Example: ₹15,000" /></label>
+      <label class="full">{labels.website}<input type="url" name="website" maxlength="200" placeholder="https://yourwebsite.com" /></label>
+      <label class="full">{labels.message}<textarea name="description" required maxlength="2000" rows="7" placeholder="Tell us about your business, goals, pages, features or problem to solve..."></textarea></label>
+    </div>
+    <div class="request-footer">
+      <button class="button primary" type="submit">{labels.submit}</button>
+      <p class="request-status" id="request-status" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+
+  <script>
+    const form = document.querySelector('#request-form');
+    const status = document.querySelector('#request-status');
+    if (form && status) {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+        const data = Object.fromEntries(new FormData(form).entries());
+        if (data.company) return;
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        status.textContent = 'Sending...';
+        try {
+          const response = await fetch('/api/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || 'Unable to send the request.');
+          form.innerHTML = `<div class="request-success"><span class="success-mark">✓</span><p class="eyebrow">Request received</p><h2>Thank you. Your request is in.</h2><p>Your tracking ID is <strong>${result.trackingId}</strong>. A receipt has been sent to ${result.email}.</p><a class="button primary" href="/">Back to home</a></div>`;
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : 'Unable to send the request.';
+          button.disabled = false;
+        }
+      });
+    }
+  </script>
+</section>
