@@ -9,6 +9,6 @@ const labels = ui[currentLocale];
 ---
 <footer class="site-footer"><div class="container footer-grid">
 <div><a class="brand" href={`${prefix}/`}><span class="brand-mark">M</span><span>{site.name}</span></a><p class="footer-copy">Websites, software and digital solutions built with purpose.</p></div>
-<div><p class="footer-label">{labels.home} · {labels.services}</p><a class="footer-link" href={`${prefix}/services/`}>{labels.services}</a><a class="footer-link" href={`${prefix}/pricing/`}>{labels.pricing}</a><a class="footer-link" href={`${prefix}/about/`}>{labels.about}</a></div>
+<div><p class="footer-label">{labels.home} · {labels.services}</p><a class="footer-link" href={`${prefix}/services/`}>{labels.services}</a><a class="footer-link" href={`${prefix}/pricing/`}>{labels.pricing}</a><a class="footer-link" href={`${prefix}/request/`}>{labels.start}</a><a class="footer-link" href={`${prefix}/about/`}>{labels.about}</a></div>
 <div><p class="footer-label">{labels.contact}</p><a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a><a class="footer-link" href={`tel:${site.phone.replace(/\s+/g,"")}`}>{site.phone}</a></div>
 </div><div class="container footer-bottom"><span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span><span><a href={`${prefix}/privacy/`}>{currentLocale === "ru" ? "Конфиденциальность" : "Privacy"}</a> · <a href={`${prefix}/terms/`}>{currentLocale === "ru" ? "Условия" : "Terms"}</a></span></div></footer>
