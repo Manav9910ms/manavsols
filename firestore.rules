@@ -45,8 +45,7 @@ service cloud.firestore {
       && request.resource.data.website.size() <= 200
       && request.resource.data.timestamp is timestamp;
 
-      allow get: if isAdmin() || request.auth == null;
-      allow list: if isAdmin();
+      allow get, list: if isAdmin();
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
         && request.resource.data.status in ['Pending', 'Working', 'Completed'];
