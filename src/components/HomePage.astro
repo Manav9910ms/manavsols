@@ -1,6 +1,6 @@
 ---
 import SectionHeading from "./SectionHeading.astro";
-import { projects, services, site, trustPoints } from "../data/site";
+import { services, site, trustPoints } from "../data/site";
 import { copy } from "../data/copy";
 
 interface Props { locale?: string; }
@@ -34,15 +34,6 @@ const localized = (path: string) => `${prefix}${path}`;
   <div class="container">
     <SectionHeading eyebrow={t.whyEyebrow} title={t.whyTitle} />
     <div class="card-grid">{trustPoints.map((point) => <article class="card"><p class="card-index">✓</p><h3>{point}</h3></article>)}</div>
-  </div>
-</section>
-
-<section class="section container">
-  <SectionHeading eyebrow={t.workEyebrow} title={t.workTitle} description={t.workDesc} />
-  <div class="card-grid">
-    {projects.map((project) => (
-      <article class="card"><p class="tag">{project.category} · {project.year}</p><h3>{project.title}</h3><p>{project.description}</p><a href={localized(`/projects/${project.slug}/`)}>{t.viewProject}</a></article>
-    ))}
   </div>
 </section>
 
