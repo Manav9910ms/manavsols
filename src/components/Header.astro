@@ -8,7 +8,7 @@ const currentLanguage = currentLocale === "en" ? "English" : locales.find((item)
 const flags: Record<string,string> = {en:"🇬🇧",ru:"🇷🇺",de:"🇩🇪",fr:"🇫🇷",es:"🇪🇸",tr:"🇹🇷",vi:"🇻🇳",id:"🇮🇩",hi:"🇮🇳"};
 const prefix = currentLocale === "en" ? "" : `/${currentLocale}`;
 const labels = ui[currentLocale];
-const links = [{label:labels.home,href:`${prefix}/`},{label:labels.services,href:`${prefix}/services/`},{label:labels.projects,href:`${prefix}/projects/`},{label:labels.pricing,href:`${prefix}/pricing/`},{label:labels.about,href:`${prefix}/about/`},{label:labels.contact,href:`${prefix}/contact/`}];
+const links = [{label:labels.home,href:`${prefix}/`},{label:labels.services,href:`${prefix}/services/`},{label:labels.pricing,href:`${prefix}/pricing/`},{label:labels.about,href:`${prefix}/about/`},{label:labels.contact,href:`${prefix}/contact/`}];
 ---
 <header class="site-header"><div class="container header-inner">
 <a class="brand" href={`${prefix}/`} aria-label="MANAV SOLS home"><span class="brand-mark">M</span><span>{site.name}</span></a>
