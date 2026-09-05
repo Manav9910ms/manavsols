@@ -17,35 +17,31 @@ service cloud.firestore {
 
     match /service_requests/{requestId} {
       allow create: if request.resource.data.keys().hasOnly([
-        'trackingId', 'name', 'email', 'mobile', 'service',
-        'package', 'budget', 'description', 'website', 'status', 'timestamp'
+        'trackingId', 'name', 'email', 'mobile',
+        'service', 'package', 'budget', 'description',
+        'website', 'status', 'timestamp'
       ])
       && request.resource.data.keys().hasAll([
-        'trackingId', 'name', 'email', 'mobile', 'service',
-        'package', 'budget', 'description', 'website', 'status', 'timestamp'
+        'trackingId', 'name', 'email', 'mobile',
+        'service', 'package', 'budget', 'description',
+        'website', 'status', 'timestamp'
       ])
       && request.resource.data.status == 'Pending'
-      && request.resource.data.trackingId is string
       && request.resource.data.trackingId.size() >= 8
-      && request.resource.data.name is string
+      && request.resource.data.trackingId.size() <= 80
       && request.resource.data.name.size() > 0
       && request.resource.data.name.size() <= 80
-      && request.resource.data.email is string
       && request.resource.data.email.size() > 3
       && request.resource.data.email.size() <= 120
-      && request.resource.data.mobile is string
       && request.resource.data.mobile.size() > 0
       && request.resource.data.mobile.size() <= 20
-      && request.resource.data.service is string
       && request.resource.data.service.size() > 0
-      && request.resource.data.budget is string
+      && request.resource.data.service.size() <= 100
+      && request.resource.data['package'].size() <= 100
       && request.resource.data.budget.size() <= 60
-      && request.resource.data.description is string
       && request.resource.data.description.size() > 0
       && request.resource.data.description.size() <= 2000
-      && request.resource.data.website is string
       && request.resource.data.website.size() <= 200
-      && request.resource.data.timestamp is string
       && request.resource.data.timestamp.size() > 0;
 
       allow get, list: if isAdmin();
