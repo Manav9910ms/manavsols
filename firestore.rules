@@ -34,8 +34,8 @@ service cloud.firestore {
       && request.resource.data.mobile.size() <= 20
       && request.resource.data.service is string
       && request.resource.data.service.size() > 0
-      && request.resource.data['package'] is string
-      && request.resource.data['package'].size() <= 100
+      && request.resource.data.get('package', '') is string
+      && request.resource.data.get('package', '').size() <= 100
       && request.resource.data.budget is string
       && request.resource.data.budget.size() <= 60
       && request.resource.data.description is string
