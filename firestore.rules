@@ -36,5 +36,12 @@ service cloud.firestore {
 
       allow delete: if isAdmin();
     }
+
+    // Publicly verifiable invoices contain only invoice-safe information.
+    match /invoices/{invoiceId} {
+      allow get: if isAdmin() || resource.data.status == 'Verified';
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
   }
 }
