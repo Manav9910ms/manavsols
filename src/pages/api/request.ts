@@ -1,25 +1,49 @@
 import type { APIRoute } from "astro";
 import { site } from "../../data/site";
 
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    },
+  });
 
-const escapeHtml = (value: string) => value.replace(/[&<>\"]/g, (char) => {
-  switch (char) {
-    case "&": return "&amp;";
-    case "<": return "&lt;";
-    case ">": return "&gt;";
-    case '"': return "&quot;";
-    default: return char;
-  }
-});
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>\"]/g, (char) => {
+    switch (char) {
+      case "&": return "&amp;";
+      case "<": return "&lt;";
+      case ">": return "&gt;";
+      case '"': return "&quot;";
+      default: return char;
+    }
+  });
 
-const clean = (value: unknown, max = 2000) => typeof value === "string" ? value.trim().slice(0, max) : "";
+const clean = (value: unknown, max = 2000) =>
+  typeof value === "string" ? value.trim().slice(0, max) : "";
+
 const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-const allowedServices = new Set(["Website", "Web App / Software", "SEO & Online Visibility", "Hosting & Technical", "Maintenance & Support", "Integrations", "AI & Automation", "Custom Software", "Other"]);
+
+const allowedServices = new Set([
+  "Website",
+  "Web App / Software",
+  "SEO & Online Visibility",
+  "Hosting & Technical",
+  "Maintenance & Support",
+  "Integrations",
+  "AI & Automation",
+  "Custom Software",
+  "Other",
+]);
+
 const stringField = (value: string) => ({ stringValue: value });
 
 export const POST: APIRoute = async ({ request }) => {
-  if (request.headers.get("content-type")?.includes("application/json") !== true) return json({ error: "Invalid request." }, 415);
+  if (request.headers.get("content-type")?.includes("application/json") !== true) {
+    return json({ error: "Invalid request." }, 415);
+  }
 
   try {
     const body = await request.json();
@@ -34,10 +58,14 @@ export const POST: APIRoute = async ({ request }) => {
     const description = clean(body?.description, 2000);
     const website = clean(body?.website, 200);
 
-    if (!name || !email || !mobile || !service || !description) return json({ error: "Please complete all required fields." }, 400);
+    if (!name || !email || !mobile || !service || !description) {
+      return json({ error: "Please complete all required fields." }, 400);
+    }
     if (!validEmail(email)) return json({ error: "Please enter a valid email address." }, 400);
     if (!allowedServices.has(service)) return json({ error: "Please select a valid service." }, 400);
-    if (website && !/^https?:\/\//i.test(website)) return json({ error: "Website URL must start with http:// or https://." }, 400);
+    if (website && !/^https?:\/\//i.test(website)) {
+      return json({ error: "Website URL must start with http:// or https://." }, 400);
+    }
 
     const now = new Date();
     const trackingId = `MS-${now.toISOString().slice(0, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
@@ -95,12 +123,17 @@ export const POST: APIRoute = async ({ request }) => {
       timestamp: escapeHtml(timestamp),
     };
 
-    const html = `<!doctype html><html><body style="margin:0;background:#f4f8fc;font-family:Arial,sans-serif;color:#10213d"><div style="max-width:680px;margin:32px auto;background:#fff;border:1px solid #dbe7f3;border-radius:16px;overflow:hidden"><div style="padding:24px 28px;background:#071a3a;color:#fff"><div style="font-size:13px;letter-spacing:2px;color:#4cc9ff;font-weight:700">MANAV SOLS</div><h1 style="margin:8px 0 0;font-size:28px">${safe.trackingId}</h1></div><div style="padding:28px"><p style="margin-top:0">${safe.name}, your project request has been received.</p><table style="width:100%;border-collapse:collapse"><tr><td style="padding:8px 0;font-weight:700">Service</td><td style="padding:8px 0">${safe.service}</td></tr><tr><td style="padding:8px 0;font-weight:700">Package</td><td style="padding:8px 0">${safe.requestPackage}</td></tr><tr><td style="padding:8px 0;font-weight:700">Budget</td><td style="padding:8px 0">${safe.budget}</td></tr><tr><td style="padding:8px 0;font-weight:700">Mobile</td><td style="padding:8px 0">${safe.mobile}</td></tr><tr><td style="padding:8px 0;font-weight:700">Website</td><td style="padding:8px 0">${safe.website}</td></tr></table><div style="margin-top:20px;padding:16px;border-radius:12px;background:#f5f9ff"><strong>Requirement</strong><p style="margin-bottom:0">${safe.description}</p></div><p style="color:#64748b;font-size:13px;margin-bottom:0">Submitted: ${safe.timestamp}</p></div></div></body></html>`;
+    const customerHtml = `<!doctype html><html><body style="margin:0;background:#f4f8fc;font-family:Arial,sans-serif;color:#10213d"><div style="max-width:680px;margin:32px auto;background:#fff;border:1px solid #dbe7f3;border-radius:16px;overflow:hidden"><div style="padding:24px 28px;background:#071a3a;color:#fff"><div style="font-size:13px;letter-spacing:2px;color:#4cc9ff;font-weight:700">MANAV SOLS</div><h1 style="margin:8px 0 0;font-size:28px">Request Receipt</h1><div style="margin-top:8px;color:#dcecff">${safe.trackingId}</div></div><div style="padding:28px"><p style="margin-top:0">Hi ${safe.name}, your project request has been received successfully.</p><p style="margin:0 0 18px">We will review your requirement and contact you using the details you provided.</p><table style="width:100%;border-collapse:collapse"><tr><td style="padding:8px 0;font-weight:700">Service</td><td style="padding:8px 0">${safe.service}</td></tr><tr><td style="padding:8px 0;font-weight:700">Package</td><td style="padding:8px 0">${safe.requestPackage}</td></tr><tr><td style="padding:8px 0;font-weight:700">Budget</td><td style="padding:8px 0">${safe.budget}</td></tr><tr><td style="padding:8px 0;font-weight:700">Mobile</td><td style="padding:8px 0">${safe.mobile}</td></tr><tr><td style="padding:8px 0;font-weight:700">Website</td><td style="padding:8px 0">${safe.website}</td></tr></table><div style="margin-top:20px;padding:16px;border-radius:12px;background:#f5f9ff"><strong>Requirement</strong><p style="margin-bottom:0">${safe.description}</p></div><p style="color:#64748b;font-size:13px;margin-bottom:0">Submitted: ${safe.timestamp}</p><p style="margin-bottom:0;margin-top:18px">Keep this tracking ID for your records: <strong>${safe.trackingId}</strong></p></div></div></body></html>`;
 
-    const sendEmail = async (to: string, subject: string) => {
+    const adminHtml = `<!doctype html><html><body style="margin:0;background:#f4f8fc;font-family:Arial,sans-serif;color:#10213d"><div style="max-width:700px;margin:32px auto;background:#fff;border:1px solid #dbe7f3;border-radius:16px;overflow:hidden"><div style="padding:24px 28px;background:#071a3a;color:#fff"><div style="font-size:13px;letter-spacing:2px;color:#4cc9ff;font-weight:700">MANAV SOLS ADMIN</div><h1 style="margin:8px 0 0;font-size:28px">New Project Request</h1><div style="margin-top:8px;color:#dcecff">${safe.trackingId}</div></div><div style="padding:28px"><table style="width:100%;border-collapse:collapse"><tr><td style="padding:8px 0;font-weight:700">Name</td><td style="padding:8px 0">${safe.name}</td></tr><tr><td style="padding:8px 0;font-weight:700">Email</td><td style="padding:8px 0">${safe.email}</td></tr><tr><td style="padding:8px 0;font-weight:700">Mobile</td><td style="padding:8px 0">${safe.mobile}</td></tr><tr><td style="padding:8px 0;font-weight:700">Service</td><td style="padding:8px 0">${safe.service}</td></tr><tr><td style="padding:8px 0;font-weight:700">Package</td><td style="padding:8px 0">${safe.requestPackage}</td></tr><tr><td style="padding:8px 0;font-weight:700">Budget</td><td style="padding:8px 0">${safe.budget}</td></tr><tr><td style="padding:8px 0;font-weight:700">Website</td><td style="padding:8px 0">${safe.website}</td></tr></table><div style="margin-top:20px;padding:16px;border-radius:12px;background:#f5f9ff"><strong>Requirement</strong><p style="margin-bottom:0">${safe.description}</p></div><p style="color:#64748b;font-size:13px;margin-bottom:0">Submitted: ${safe.timestamp}</p><p style="margin-bottom:0;margin-top:18px"><a href="https://manavsols.com/admin/">Open Admin Panel →</a></p></div></div></body></html>`;
+
+    const sendEmail = async (to: string, subject: string, html: string) => {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
-        headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ from, to: [to], subject, html, reply_to: email }),
       });
       if (!response.ok) {
@@ -112,8 +145,8 @@ export const POST: APIRoute = async ({ request }) => {
     };
 
     const [adminEmailSent, customerEmailSent] = await Promise.all([
-      sendEmail(site.email, `New MANAV SOLS Project Request — ${trackingId}`),
-      sendEmail(email, `MANAV SOLS Request Receipt — ${trackingId}`),
+      sendEmail(site.email, `New MANAV SOLS Project Request — ${trackingId}`, adminHtml),
+      sendEmail(email, `MANAV SOLS Request Receipt — ${trackingId}`, customerHtml),
     ]);
 
     if (!adminEmailSent && !customerEmailSent) {
