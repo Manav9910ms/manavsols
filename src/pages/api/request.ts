@@ -20,6 +20,7 @@ const stringField = (value: string) => ({ stringValue: value });
 
 export const POST: APIRoute = async ({ request }) => {
   if (request.headers.get("content-type")?.includes("application/json") !== true) return json({ error: "Invalid request." }, 415);
+
   try {
     const body = await request.json();
     if (clean(body?.company, 100)) return json({ error: "Invalid request." }, 400);
@@ -46,7 +47,10 @@ export const POST: APIRoute = async ({ request }) => {
     const apiKey = import.meta.env.PUBLIC_FIREBASE_API_KEY;
     const resendKey = import.meta.env.RESEND_API_KEY;
     const from = import.meta.env.RESEND_FROM_EMAIL || `${site.name} <${site.email}>`;
-    if (!projectId || !apiKey || !resendKey) return json({ error: "Request system is not configured yet. Please try again shortly." }, 503);
+
+    if (!projectId || !apiKey || !resendKey) {
+      return json({ error: "Request system is not configured yet. Please try again shortly." }, 503);
+    }
 
     const document = {
       fields: {
@@ -64,34 +68,62 @@ export const POST: APIRoute = async ({ request }) => {
       },
     };
 
-    const firestoreResponse = await fetch(`https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/service_requests?documentId=${encodeURIComponent(trackingId)}&key=${encodeURIComponent(apiKey)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(document),
-    });
+    const firestoreResponse = await fetch(
+      `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/service_requests?documentId=${encodeURIComponent(trackingId)}&key=${encodeURIComponent(apiKey)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(document),
+      },
+    );
+
     if (!firestoreResponse.ok) {
       console.error("Firestore request creation failed", await firestoreResponse.text());
       return json({ error: "We could not save your request. Please try again." }, 502);
     }
 
     const safe = {
-      trackingId: escapeHtml(trackingId), name: escapeHtml(name), email: escapeHtml(email), mobile: escapeHtml(mobile), service: escapeHtml(service),
-      requestPackage: escapeHtml(requestPackage || "Not specified"), budget: escapeHtml(budget || "Not specified"), website: escapeHtml(website || "Not specified"),
-      description: escapeHtml(description).replace(/\n/g, "<br>"), timestamp: escapeHtml(timestamp),
+      trackingId: escapeHtml(trackingId),
+      name: escapeHtml(name),
+      email: escapeHtml(email),
+      mobile: escapeHtml(mobile),
+      service: escapeHtml(service),
+      requestPackage: escapeHtml(requestPackage || "Not specified"),
+      budget: escapeHtml(budget || "Not specified"),
+      website: escapeHtml(website || "Not specified"),
+      description: escapeHtml(description).replace(/\n/g, "<br>"),
+      timestamp: escapeHtml(timestamp),
     };
 
     const html = `<!doctype html><html><body style="margin:0;background:#f4f8fc;font-family:Arial,sans-serif;color:#10213d"><div style="max-width:680px;margin:32px auto;background:#fff;border:1px solid #dbe7f3;border-radius:16px;overflow:hidden"><div style="padding:24px 28px;background:#071a3a;color:#fff"><div style="font-size:13px;letter-spacing:2px;color:#4cc9ff;font-weight:700">MANAV SOLS</div><h1 style="margin:8px 0 0;font-size:28px">${safe.trackingId}</h1></div><div style="padding:28px"><p style="margin-top:0">${safe.name}, your project request has been received.</p><table style="width:100%;border-collapse:collapse"><tr><td style="padding:8px 0;font-weight:700">Service</td><td style="padding:8px 0">${safe.service}</td></tr><tr><td style="padding:8px 0;font-weight:700">Package</td><td style="padding:8px 0">${safe.requestPackage}</td></tr><tr><td style="padding:8px 0;font-weight:700">Budget</td><td style="padding:8px 0">${safe.budget}</td></tr><tr><td style="padding:8px 0;font-weight:700">Mobile</td><td style="padding:8px 0">${safe.mobile}</td></tr><tr><td style="padding:8px 0;font-weight:700">Website</td><td style="padding:8px 0">${safe.website}</td></tr></table><div style="margin-top:20px;padding:16px;border-radius:12px;background:#f5f9ff"><strong>Requirement</strong><p style="margin-bottom:0">${safe.description}</p></div><p style="color:#64748b;font-size:13px;margin-bottom:0">Submitted: ${safe.timestamp}</p></div></div></body></html>`;
 
-    const emailResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to: [site.email, email], subject: `MANAV SOLS Request Receipt — ${trackingId}`, html, reply_to: email }),
-    });
+    const sendEmail = async (to: string, subject: string) => {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from, to: [to], subject, html, reply_to: email }),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Resend email failed for ${to}`, errorText);
+        return false;
+      }
+      return true;
+    };
 
-    if (!emailResponse.ok) {
-      console.error("Resend email failed", await emailResponse.text());
-      return json({ trackingId, email, warning: "Your request was saved, but the receipt email could not be sent right now." }, 201);
+    const [adminEmailSent, customerEmailSent] = await Promise.all([
+      sendEmail(site.email, `New MANAV SOLS Project Request — ${trackingId}`),
+      sendEmail(email, `MANAV SOLS Request Receipt — ${trackingId}`),
+    ]);
+
+    if (!adminEmailSent && !customerEmailSent) {
+      return json({ trackingId, email, warning: "Your request was saved, but the receipt emails could not be sent right now." }, 201);
     }
+
+    if (!adminEmailSent || !customerEmailSent) {
+      return json({ trackingId, email, warning: "Your request was saved, but one of the receipt emails could not be sent right now." }, 201);
+    }
+
     return json({ trackingId, email }, 201);
   } catch (error) {
     console.error("Request API error", error);
