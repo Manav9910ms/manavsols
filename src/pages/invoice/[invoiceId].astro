@@ -1,42 +1,101 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-const invoiceId = Astro.params.invoiceId ?? '';
 ---
 <BaseLayout title="Invoice Verification" description="Verify a MANAV SOLS invoice." noindex>
   <section class="invoice-page container">
     <div id="invoice-state" class="invoice-state">
-      <p class="eyebrow">MANAV SOLS INVOICE VERIFICATION</p><h1>Checking invoice...</h1><p>Please wait while we verify this invoice.</p>
+      <p class="eyebrow">MANAV SOLS INVOICE VERIFICATION</p>
+      <h1>Checking invoice...</h1>
+      <p>Please wait while we verify this invoice.</p>
     </div>
+
     <article id="invoice-card" class="invoice-card" hidden>
-      <div class="invoice-top"><div><p class="eyebrow">MANAV SOLS</p><h1>INVOICE</h1><p class="invoice-number" id="invoice-number"></p></div><div class="verified-badge">✓ VERIFIED</div></div>
-      <div class="invoice-meta-grid"><div><span>Bill To</span><strong id="client-name"></strong><small id="business-name"></small></div><div><span>Issue date</span><strong id="issue-date"></strong></div><div><span>Due date</span><strong id="due-date"></strong></div><div><span>Payment status</span><strong id="payment-status"></strong></div></div>
-      <div class="invoice-table-wrap"><table><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody id="invoice-items"></tbody></table></div>
-      <div class="invoice-bottom"><div class="invoice-notes"><strong>Notes</strong><p id="invoice-notes"></p></div><div class="invoice-totals"><div><span>Subtotal</span><strong id="subtotal"></strong></div><div><span>Discount</span><strong id="discount"></strong></div><div><span>Tax</span><strong id="tax"></strong></div><div class="grand"><span>Total</span><strong id="total"></strong></div></div><div class="qr-block"><img id="invoice-qr" alt="Invoice verification QR code" /><p>Scan to verify this invoice on manavsols.com</p></div></div>
+      <div class="invoice-top">
+        <div>
+          <p class="eyebrow">MANAV SOLS</p>
+          <h1>INVOICE</h1>
+          <p class="invoice-number" id="invoice-number"></p>
+        </div>
+        <div class="verified-badge">✓ VERIFIED</div>
+      </div>
+
+      <div class="invoice-meta-grid">
+        <div><span>Bill To</span><strong id="client-name"></strong><small id="business-name"></small></div>
+        <div><span>Issue date</span><strong id="issue-date"></strong></div>
+        <div><span>Due date</span><strong id="due-date"></strong></div>
+        <div><span>Payment status</span><strong id="payment-status"></strong></div>
+      </div>
+
+      <div class="invoice-table-wrap">
+        <table>
+          <thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+          <tbody id="invoice-items"></tbody>
+        </table>
+      </div>
+
+      <div class="invoice-bottom">
+        <div class="invoice-notes"><strong>Notes</strong><p id="invoice-notes"></p></div>
+        <div class="invoice-totals">
+          <div><span>Subtotal</span><strong id="subtotal"></strong></div>
+          <div><span>Discount</span><strong id="discount"></strong></div>
+          <div><span>Tax</span><strong id="tax"></strong></div>
+          <div class="grand"><span>Total</span><strong id="total"></strong></div>
+        </div>
+        <div class="qr-block">
+          <img id="invoice-qr" alt="Invoice verification QR code" />
+          <p>Scan to verify this invoice on manavsols.com</p>
+        </div>
+      </div>
+
       <footer>Verified by MANAV SOLS · <span id="verified-id"></span></footer>
     </article>
   </section>
-  <script define:vars={{ invoiceId }}>
+
+  <script define:vars={{ invoiceId: Astro.params.invoiceId ?? '' }}>
     import { doc, getDoc } from 'firebase/firestore';
     import { db } from '../../lib/firebase';
+
     const state = document.querySelector('#invoice-state');
     const card = document.querySelector('#invoice-card');
-    const money = (value) => new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:2}).format(Number(value||0));
-    const date = (value) => value ? new Date(value).toLocaleDateString('en-IN',{year:'numeric',month:'short',day:'numeric'}) : '—';
-    const text = (id,value) => { const el=document.querySelector(id); if(el) el.textContent=value??''; };
-    const escape = (value) => String(value ?? '').replace(/[&<>\"]/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[char]||char));
+    const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(Number(value || 0));
+    const date = (value) => value ? new Date(value).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+    const text = (id, value) => { const el = document.querySelector(id); if (el) el.textContent = value ?? ''; };
+
     const load = async () => {
       try {
-        const snapshot = await getDoc(doc(db,'invoices',invoiceId));
-        if(!snapshot.exists() || snapshot.data().status !== 'Verified') throw new Error('not found');
-        const data=snapshot.data();
-        text('#invoice-number',data.invoiceNumber); text('#client-name',data.clientName); text('#business-name',data.businessName||''); text('#issue-date',date(data.issueDate)); text('#due-date',date(data.dueDate)); text('#payment-status',data.paymentStatus||'Unpaid'); text('#invoice-notes',data.notes||'Thank you for choosing MANAV SOLS.'); text('#subtotal',money(data.subtotal)); text('#discount',money(data.discount)); text('#tax',money(data.tax)); text('#total',money(data.total)); text('#verified-id',data.invoiceNumber);
-        const items=document.querySelector('#invoice-items'); if(items) items.innerHTML=(data.items||[]).map((item)=>`<tr><td>${escape(item.description)}</td><td>${escape(item.quantity)}</td><td>${money(item.rate)}</td><td>${money(item.amount)}</td></tr>`).join('');
-        const qr=document.querySelector('#invoice-qr'); if(qr) qr.src=`https://quickchart.io/qr?text=${encodeURIComponent(location.href)}&size=220&margin=2`;
-        state?.setAttribute('hidden','true'); card?.removeAttribute('hidden');
-      } catch { if(state) state.innerHTML='<p class="eyebrow">MANAV SOLS INVOICE VERIFICATION</p><h1>Invoice not found</h1><p>This invoice could not be verified. Check the invoice number or scan the QR code again.</p><a class="button primary" href="/">Back to MANAV SOLS</a>'; }
-    }; load();
+        const snapshot = await getDoc(doc(db, 'invoices', invoiceId));
+        if (!snapshot.exists() || snapshot.data().status !== 'Verified') throw new Error('Invoice not found');
+        const data = snapshot.data();
+        text('#invoice-number', data.invoiceNumber);
+        text('#client-name', data.clientName);
+        text('#business-name', data.businessName || '');
+        text('#issue-date', date(data.issueDate));
+        text('#due-date', date(data.dueDate));
+        text('#payment-status', data.paymentStatus || 'Unpaid');
+        text('#invoice-notes', data.notes || 'Thank you for choosing MANAV SOLS.');
+        text('#subtotal', money(data.subtotal));
+        text('#discount', money(data.discount));
+        text('#tax', money(data.tax));
+        text('#total', money(data.total));
+        text('#verified-id', data.invoiceNumber);
+        const items = document.querySelector('#invoice-items');
+        if (items) items.innerHTML = (data.items || []).map((item) => `<tr><td>${String(item.description || '')}</td><td>${item.quantity}</td><td>${money(item.rate)}</td><td>${money(item.amount)}</td></tr>`).join('');
+        const qr = document.querySelector('#invoice-qr');
+        if (qr) qr.src = `https://quickchart.io/qr?text=${encodeURIComponent(location.origin + location.pathname)}&size=220&margin=2`;
+        state?.setAttribute('hidden', 'true');
+        card?.removeAttribute('hidden');
+
+        if (new URLSearchParams(location.search).get('print') === '1') {
+          setTimeout(() => window.print(), 450);
+        }
+      } catch {
+        if (state) state.innerHTML = '<p class="eyebrow">MANAV SOLS INVOICE VERIFICATION</p><h1>Invoice not found</h1><p>This invoice could not be verified. Check the invoice number or scan the QR code again.</p><a class="button primary" href="/">Back to MANAV SOLS</a>';
+      }
+    };
+    load();
   </script>
 </BaseLayout>
+
 <style>
-.invoice-page{max-width:980px}.invoice-state,.invoice-card{margin:28px 0 60px}.invoice-state{padding:48px 10px}.invoice-state h1{margin:0 0 12px;font-size:clamp(38px,6vw,64px)}.invoice-state p{color:var(--muted)}.invoice-card{background:#fff;color:#13213d;border:1px solid #dce8f5;border-radius:24px;box-shadow:0 26px 70px rgba(15,33,71,.12);overflow:hidden}.invoice-top{display:flex;justify-content:space-between;gap:24px;padding:34px;background:linear-gradient(135deg,#071a3a,#123f85);color:#fff}.invoice-top h1{margin:0;font-size:44px;letter-spacing:2px}.invoice-top .eyebrow{color:#4cc9ff;margin-bottom:8px}.invoice-number{margin:8px 0 0;color:#dcecff;font-weight:700;letter-spacing:1px}.verified-badge{align-self:flex-start;padding:10px 14px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.12);font-weight:900;color:#fff}.invoice-meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:24px 28px;border-bottom:1px solid #e7eef7}.invoice-meta-grid div{padding:14px;background:#f7faff;border-radius:14px}.invoice-meta-grid span,.invoice-notes strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#60708a;font-weight:800;margin-bottom:6px}.invoice-meta-grid strong{display:block;font-size:16px}.invoice-meta-grid small{display:block;color:#60708a;margin-top:4px}.invoice-table-wrap{padding:28px}.invoice-table-wrap table{width:100%;border-collapse:collapse}.invoice-table-wrap th,.invoice-table-wrap td{text-align:left;padding:14px 10px;border-bottom:1px solid #e7eef7}.invoice-table-wrap th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#60708a}.invoice-table-wrap td:nth-child(n+2),.invoice-table-wrap th:nth-child(n+2){text-align:right}.invoice-bottom{display:grid;grid-template-columns:1fr 290px;gap:24px;padding:0 28px 28px}.invoice-notes,.invoice-totals{padding:18px;border-radius:15px;background:#f7faff}.invoice-notes p{margin:0;color:#536783;white-space:pre-wrap}.invoice-totals div{display:flex;justify-content:space-between;gap:20px;padding:7px 0;color:#536783}.invoice-totals .grand{margin-top:8px;padding-top:14px;border-top:2px solid #dbe6f3;color:#13213d;font-size:20px}.qr-block{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding-top:4px}.qr-block img{width:150px;height:150px;border:1px solid #dbe6f3;border-radius:12px;padding:8px;background:#fff}.qr-block p{margin:0;color:#60708a;font-size:13px}.invoice-card footer{padding:18px 28px;background:#f7faff;border-top:1px solid #e7eef7;color:#60708a;font-size:12px}@media(max-width:760px){.invoice-meta-grid{grid-template-columns:1fr 1fr}.invoice-bottom{grid-template-columns:1fr}.qr-block{grid-column:auto}.invoice-top{flex-direction:column}.invoice-table-wrap{overflow:auto}}@media(max-width:520px){.invoice-meta-grid{grid-template-columns:1fr}.invoice-table-wrap{padding:18px}.invoice-top{padding:24px}.invoice-top h1{font-size:36px}}@media print{header,footer,.skip-link{display:none!important}.invoice-page{max-width:none;margin:0}.invoice-card{margin:0;box-shadow:none;border:0;border-radius:0}}
+.invoice-page{max-width:980px}.invoice-state,.invoice-card{margin:28px 0 60px}.invoice-state{padding:48px 10px}.invoice-state h1{margin:0 0 12px;font-size:clamp(38px,6vw,64px)}.invoice-state p{color:var(--muted)}.invoice-card{background:#fff;color:#13213d;border:1px solid #dce8f5;border-radius:24px;box-shadow:0 26px 70px rgba(15,33,71,.12);overflow:hidden}.invoice-top{display:flex;justify-content:space-between;gap:24px;padding:34px;background:linear-gradient(135deg,#071a3a,#123f85);color:#fff}.invoice-top h1{margin:0;font-size:44px;letter-spacing:2px}.invoice-top .eyebrow{color:#4cc9ff;margin-bottom:8px}.invoice-number{margin:8px 0 0;color:#dcecff;font-weight:700;letter-spacing:1px}.verified-badge{align-self:flex-start;padding:10px 14px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.12);font-weight:900;color:#fff}.invoice-meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:24px 28px;border-bottom:1px solid #e7eef7}.invoice-meta-grid div{padding:14px;background:#f7faff;border-radius:14px}.invoice-meta-grid span,.invoice-notes strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#60708a;font-weight:800;margin-bottom:6px}.invoice-meta-grid strong{display:block;font-size:16px}.invoice-meta-grid small{display:block;color:#60708a;margin-top:4px}.invoice-table-wrap{padding:28px}.invoice-table-wrap table{width:100%;border-collapse:collapse}.invoice-table-wrap th,.invoice-table-wrap td{text-align:left;padding:14px 10px;border-bottom:1px solid #e7eef7}.invoice-table-wrap th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#60708a}.invoice-table-wrap td:nth-child(n+2),.invoice-table-wrap th:nth-child(n+2){text-align:right}.invoice-bottom{display:grid;grid-template-columns:1fr 290px;gap:24px;padding:0 28px 28px}.invoice-notes{padding:18px;border-radius:15px;background:#f7faff}.invoice-notes p{margin:0;color:#536783;white-space:pre-wrap}.invoice-totals{padding:18px;border-radius:15px;background:#f7faff}.invoice-totals div{display:flex;justify-content:space-between;gap:20px;padding:7px 0;color:#536783}.invoice-totals .grand{margin-top:8px;padding-top:14px;border-top:2px solid #dbe6f3;color:#13213d;font-size:20px}.qr-block{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding-top:4px}.qr-block img{width:150px;height:150px;border:1px solid #dbe6f3;border-radius:12px;padding:8px;background:#fff}.qr-block p{margin:0;color:#60708a;font-size:13px}.invoice-card footer{padding:18px 28px;background:#f7faff;border-top:1px solid #e7eef7;color:#60708a;font-size:12px}@media(max-width:760px){.invoice-meta-grid{grid-template-columns:1fr 1fr}.invoice-bottom{grid-template-columns:1fr}.qr-block{grid-column:auto}.invoice-top{flex-direction:column}.invoice-table-wrap{overflow:auto}}@media(max-width:520px){.invoice-meta-grid{grid-template-columns:1fr}.invoice-table-wrap{padding:18px}.invoice-top{padding:24px}.invoice-top h1{font-size:36px}}@media print{body{background:#fff!important}.invoice-page{max-width:none;padding:0}.invoice-state{display:none!important}.invoice-card{margin:0;box-shadow:none;border:0;border-radius:0}.invoice-top{print-color-adjust:exact;-webkit-print-color-adjust:exact}.qr-block img{print-color-adjust:exact;-webkit-print-color-adjust:exact}header,nav,.site-header,.site-footer{display:none!important}}
 </style>
