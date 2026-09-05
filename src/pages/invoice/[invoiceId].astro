@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+const invoiceId = Astro.params.invoiceId ?? "";
 ---
 <BaseLayout title="Invoice Verification" description="Verify a MANAV SOLS invoice." noindex>
-  <section class="invoice-page container">
+  <section class="invoice-page container" data-invoice-id={invoiceId}>
     <div id="invoice-state" class="invoice-state">
       <p class="eyebrow">MANAV SOLS INVOICE VERIFICATION</p>
       <h1>Checking invoice...</h1>
@@ -51,18 +52,22 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     </article>
   </section>
 
-  <script define:vars={{ invoiceId: Astro.params.invoiceId ?? '' }}>
+  <script>
     import { doc, getDoc } from 'firebase/firestore';
     import { db } from '../../lib/firebase';
 
+    const page = document.querySelector('.invoice-page');
+    const invoiceId = page?.getAttribute('data-invoice-id') || '';
     const state = document.querySelector('#invoice-state');
     const card = document.querySelector('#invoice-card');
     const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(Number(value || 0));
     const date = (value) => value ? new Date(value).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
     const text = (id, value) => { const el = document.querySelector(id); if (el) el.textContent = value ?? ''; };
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>\"]/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;' }[char] || char));
 
     const load = async () => {
       try {
+        if (!invoiceId) throw new Error('Invoice ID missing');
         const snapshot = await getDoc(doc(db, 'invoices', invoiceId));
         if (!snapshot.exists() || snapshot.data().status !== 'Verified') throw new Error('Invoice not found');
         const data = snapshot.data();
@@ -79,15 +84,12 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         text('#total', money(data.total));
         text('#verified-id', data.invoiceNumber);
         const items = document.querySelector('#invoice-items');
-        if (items) items.innerHTML = (data.items || []).map((item) => `<tr><td>${String(item.description || '')}</td><td>${item.quantity}</td><td>${money(item.rate)}</td><td>${money(item.amount)}</td></tr>`).join('');
+        if (items) items.innerHTML = (data.items || []).map((item) => `<tr><td>${escapeHtml(item.description || '')}</td><td>${escapeHtml(item.quantity)}</td><td>${money(item.rate)}</td><td>${money(item.amount)}</td></tr>`).join('');
         const qr = document.querySelector('#invoice-qr');
         if (qr) qr.src = `https://quickchart.io/qr?text=${encodeURIComponent(location.origin + location.pathname)}&size=220&margin=2`;
         state?.setAttribute('hidden', 'true');
         card?.removeAttribute('hidden');
-
-        if (new URLSearchParams(location.search).get('print') === '1') {
-          setTimeout(() => window.print(), 450);
-        }
+        if (new URLSearchParams(location.search).get('print') === '1') setTimeout(() => window.print(), 450);
       } catch {
         if (state) state.innerHTML = '<p class="eyebrow">MANAV SOLS INVOICE VERIFICATION</p><h1>Invoice not found</h1><p>This invoice could not be verified. Check the invoice number or scan the QR code again.</p><a class="button primary" href="/">Back to MANAV SOLS</a>';
       }
