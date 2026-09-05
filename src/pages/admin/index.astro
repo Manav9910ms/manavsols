@@ -1,41 +1,57 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Admin · Requests" description="Private MANAV SOLS request management panel." noindex>
+<BaseLayout title="Admin · Requests & Invoices" description="Private MANAV SOLS request and invoice management panel." noindex>
   <section class="detail-page container admin-page">
     <div class="admin-header">
-      <div>
-        <p class="eyebrow">MANAV SOLS ADMIN</p>
-        <h1>Requests</h1>
-        <p class="lead">Private request inbox. Only the authorized Firebase account can view or update requests.</p>
-      </div>
+      <div><p class="eyebrow">MANAV SOLS ADMIN</p><h1>Requests & invoices</h1><p class="lead">Private management panel. Only the authorized Firebase account can access requests and invoices.</p></div>
       <button class="button secondary" id="logout" hidden>Sign out</button>
     </div>
 
     <div id="login-card" class="detail-panel admin-login">
-      <h2>Admin sign in</h2>
-      <p>Use the authorized Firebase account to open the request inbox.</p>
-      <form id="admin-login-form" class="admin-login-form">
-        <label>Email<input id="admin-email" type="email" value="manav991077@gmail.com" autocomplete="username" required /></label>
-        <label>Password<input id="admin-password" type="password" autocomplete="current-password" required /></label>
-        <button class="button primary" type="submit">Sign in</button>
-        <p id="login-status" class="request-status" role="status"></p>
-      </form>
+      <h2>Admin sign in</h2><p>Use the authorized Firebase account to open the private dashboard.</p>
+      <form id="admin-login-form" class="admin-login-form"><label>Email<input id="admin-email" type="email" value="manav991077@gmail.com" autocomplete="username" required /></label><label>Password<input id="admin-password" type="password" autocomplete="current-password" required /></label><button class="button primary" type="submit">Sign in</button><p id="login-status" class="request-status" role="status"></p></form>
     </div>
 
     <div id="admin-app" hidden>
-      <div class="admin-toolbar"><strong id="request-count">0 requests</strong><button class="button secondary" id="refresh">Refresh</button></div>
-      <div id="request-list" class="admin-request-list"></div>
-      <div id="admin-status" class="request-status" role="status"></div>
+      <section class="admin-section">
+        <div class="section-title-row"><div><p class="eyebrow">INVOICE BUILDER</p><h2>Create an invoice</h2></div><a class="button secondary" href="/" target="_blank" rel="noopener">View site</a></div>
+        <form id="invoice-form" class="detail-panel invoice-builder">
+          <div class="invoice-grid">
+            <label>Client name<input id="invoice-client" required maxlength="100" placeholder="Client full name" /></label>
+            <label>Business / company<input id="invoice-business" maxlength="120" placeholder="Business name (optional)" /></label>
+            <label>Issue date<input id="invoice-issue" type="date" required /></label>
+            <label>Due date<input id="invoice-due" type="date" /></label>
+            <label>Tax / GST %<input id="invoice-tax" type="number" min="0" max="100" step="0.01" value="0" /></label>
+            <label>Discount (₹)<input id="invoice-discount" type="number" min="0" step="0.01" value="0" /></label>
+            <label>Payment status<select id="invoice-payment"><option>Unpaid</option><option>Paid</option><option>Partially Paid</option><option>Cancelled</option></select></label>
+            <label class="full-field">Notes<textarea id="invoice-notes" rows="3" maxlength="800" placeholder="Thank you for choosing MANAV SOLS."></textarea></label>
+          </div>
+          <div class="items-header"><h3>Items</h3><button class="button secondary" type="button" id="add-item">+ Add item</button></div>
+          <div id="invoice-items-editor" class="invoice-items-editor"></div>
+          <div class="invoice-builder-bottom"><div class="invoice-preview-summary"><span>Invoice number</span><strong id="invoice-preview-number">Generated on save</strong><p>Each invoice gets a unique ID and a QR code that opens its verified page on manavsols.com.</p></div><div class="invoice-total-preview"><div><span>Subtotal</span><strong id="preview-subtotal">₹0.00</strong></div><div><span>Discount</span><strong id="preview-discount">₹0.00</strong></div><div><span>Tax</span><strong id="preview-tax">₹0.00</strong></div><div class="grand"><span>Total</span><strong id="preview-total">₹0.00</strong></div></div></div>
+          <div class="invoice-actions"><button class="button primary" type="submit">Generate verified invoice</button><p id="invoice-status" class="request-status" role="status"></p></div>
+        </form>
+        <div id="generated-invoice" class="generated-invoice" hidden></div>
+      </section>
+
+      <section class="admin-section"><div class="admin-toolbar"><strong id="request-count">0 requests</strong><button class="button secondary" id="refresh">Refresh requests</button></div><div id="request-list" class="admin-request-list"></div><div id="admin-status" class="request-status" role="status"></div></section>
+      <section class="admin-section"><div class="admin-toolbar"><strong id="invoice-count">0 invoices</strong><button class="button secondary" id="refresh-invoices">Refresh invoices</button></div><div id="invoice-list" class="admin-invoice-list"></div></section>
     </div>
   </section>
 
   <script>
     import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-    import { collection, doc, getDocs, orderBy, query, Timestamp, updateDoc } from 'firebase/firestore';
+    import { collection, deleteDoc, doc, getDocs, orderBy, query, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
     import { auth, db } from '../../lib/firebase';
 
     const ADMIN_EMAIL = 'manav991077@gmail.com';
+    const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(Number(value || 0));
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>\"]/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;' }[char] || char));
+    const formatDate = (value) => value instanceof Timestamp ? value.toDate().toLocaleString() : new Date(String(value || '')).toLocaleString();
+    const formatDay = (value) => value ? new Date(`${value}T00:00:00`).toLocaleDateString('en-IN', { year:'numeric', month:'short', day:'numeric' }) : '—';
+    const makeInvoiceNumber = () => `MS-INV-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${crypto.randomUUID().slice(0,6).toUpperCase()}`;
+
     const loginCard = document.querySelector('#login-card');
     const adminApp = document.querySelector('#admin-app');
     const loginForm = document.querySelector('#admin-login-form');
@@ -45,89 +61,46 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     const adminStatus = document.querySelector('#admin-status');
     const logout = document.querySelector('#logout');
     const refresh = document.querySelector('#refresh');
+    const invoiceForm = document.querySelector('#invoice-form');
+    const invoiceItemsEditor = document.querySelector('#invoice-items-editor');
+    const invoiceStatus = document.querySelector('#invoice-status');
+    const generatedInvoice = document.querySelector('#generated-invoice');
+    const invoiceList = document.querySelector('#invoice-list');
+    const invoiceCount = document.querySelector('#invoice-count');
 
-    const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\"]/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;' }[char] || char));
-    const formatDate = (value: unknown) => value instanceof Timestamp ? value.toDate().toLocaleString() : new Date(String(value || '')).toLocaleString();
-
-    const renderRequests = async () => {
-      if (!requestList || !requestCount || !adminStatus) return;
-      adminStatus.textContent = 'Loading requests...';
-      try {
-        const snapshot = await getDocs(query(collection(db, 'service_requests'), orderBy('timestamp', 'desc')));
-        requestCount.textContent = `${snapshot.size} request${snapshot.size === 1 ? '' : 's'}`;
-        if (!snapshot.size) {
-          requestList.innerHTML = '<div class="detail-panel"><h2>No requests yet</h2><p>New project requests will appear here automatically.</p></div>';
-          adminStatus.textContent = '';
-          return;
-        }
-        requestList.innerHTML = [...snapshot.docs].map((item) => {
-          const data = item.data();
-          return `<article class="admin-request card" data-id="${escapeHtml(item.id)}">
-            <div class="admin-request-top"><div><p class="card-index">${escapeHtml(data.trackingId)}</p><h2>${escapeHtml(data.name)}</h2><p class="admin-meta">${escapeHtml(data.email)} · ${escapeHtml(data.mobile)}</p></div>
-            <select class="status-select" aria-label="Request status" data-status="${escapeHtml(item.id)}"><option ${data.status==='Pending'?'selected':''}>Pending</option><option ${data.status==='Working'?'selected':''}>Working</option><option ${data.status==='Completed'?'selected':''}>Completed</option></select></div>
-            <div class="admin-request-grid"><div><strong>Service</strong><span>${escapeHtml(data.service)}</span></div><div><strong>Package</strong><span>${escapeHtml(data.package || 'Not specified')}</span></div><div><strong>Budget</strong><span>${escapeHtml(data.budget || 'Not specified')}</span></div><div><strong>Website</strong><span>${escapeHtml(data.website || 'Not specified')}</span></div></div>
-            <div class="admin-message"><strong>Requirement</strong><p>${escapeHtml(data.description).replace(/\n/g, '<br>')}</p></div>
-            <p class="admin-time">Submitted ${escapeHtml(formatDate(data.timestamp))}</p>
-          </article>`;
-        }).join('');
-
-        document.querySelectorAll<HTMLSelectElement>('.status-select').forEach((select) => {
-          select.addEventListener('change', async () => {
-            const id = select.dataset.status;
-            if (!id) return;
-            try {
-              await updateDoc(doc(db, 'service_requests', id), { status: select.value });
-              adminStatus.textContent = `Updated ${id} to ${select.value}.`;
-            } catch {
-              adminStatus.textContent = 'Could not update this request.';
-            }
-          });
-        });
-        adminStatus.textContent = '';
-      } catch {
-        adminStatus.textContent = 'Could not load requests. Check Firebase rules and configuration.';
-      }
+    const itemRow = (description = '', quantity = 1, rate = '') => {
+      const row = document.createElement('div'); row.className = 'invoice-item-row';
+      row.innerHTML = `<input class="item-description" maxlength="160" placeholder="Service / item description" value="${escapeHtml(description)}" required /><input class="item-qty" type="number" min="0.01" step="0.01" value="${quantity}" required /><input class="item-rate" type="number" min="0" step="0.01" value="${escapeHtml(rate)}" placeholder="0" required /><output class="item-amount">₹0.00</output><button class="icon-remove" type="button" aria-label="Remove item">×</button>`;
+      row.querySelectorAll('input').forEach((input) => input.addEventListener('input', updatePreview));
+      row.querySelector('.icon-remove')?.addEventListener('click', () => { row.remove(); updatePreview(); }); invoiceItemsEditor?.appendChild(row);
+    };
+    const getItems = () => [...document.querySelectorAll('.invoice-item-row')].map((row) => ({ description: row.querySelector('.item-description')?.value.trim() || '', quantity: Number(row.querySelector('.item-qty')?.value || 0), rate: Number(row.querySelector('.item-rate')?.value || 0), amount: Number(((Number(row.querySelector('.item-qty')?.value || 0)) * (Number(row.querySelector('.item-rate')?.value || 0))).toFixed(2)) })).filter((item) => item.description && item.quantity > 0 && item.rate >= 0);
+    const updatePreview = () => {
+      const rows = [...document.querySelectorAll('.invoice-item-row')]; let subtotal = 0;
+      rows.forEach((row) => { const quantity = Number(row.querySelector('.item-qty')?.value || 0); const rate = Number(row.querySelector('.item-rate')?.value || 0); const amount = quantity * rate; subtotal += amount; row.querySelector('.item-amount').textContent = money(amount); });
+      const discount = Math.max(0, Number(document.querySelector('#invoice-discount')?.value || 0)); const taxRate = Math.max(0, Number(document.querySelector('#invoice-tax')?.value || 0)); const taxable = Math.max(0, subtotal - discount); const tax = Number((taxable * taxRate / 100).toFixed(2)); const total = Number((taxable + tax).toFixed(2));
+      document.querySelector('#preview-subtotal').textContent = money(subtotal); document.querySelector('#preview-discount').textContent = money(discount); document.querySelector('#preview-tax').textContent = money(tax); document.querySelector('#preview-total').textContent = money(total); return { items:getItems(), subtotal:Number(subtotal.toFixed(2)), discount, taxRate, tax, total };
     };
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user && user.email?.toLowerCase() === ADMIN_EMAIL) {
-        if (loginCard) loginCard.hidden = true;
-        if (adminApp) adminApp.hidden = false;
-        if (logout) logout.hidden = false;
-        await renderRequests();
-      } else {
-        if (loginCard) loginCard.hidden = false;
-        if (adminApp) adminApp.hidden = true;
-        if (logout) logout.hidden = true;
-        if (user) await signOut(auth);
-      }
-    });
+    const loadRequests = async () => {
+      adminStatus.textContent = 'Loading requests...'; try { const snapshot = await getDocs(query(collection(db,'service_requests'),orderBy('timestamp','desc'))); requestCount.textContent = `${snapshot.size} request${snapshot.size===1?'':'s'}`; requestList.innerHTML = snapshot.size ? [...snapshot.docs].map((item)=>{ const data=item.data(); return `<article class="admin-request card"><div class="admin-request-top"><div><p class="card-index">${escapeHtml(data.trackingId)}</p><h2>${escapeHtml(data.name)}</h2><p class="admin-meta">${escapeHtml(data.email)} · ${escapeHtml(data.mobile)}</p></div><select class="status-select" data-status="${escapeHtml(item.id)}"><option ${data.status==='Pending'?'selected':''}>Pending</option><option ${data.status==='Working'?'selected':''}>Working</option><option ${data.status==='Completed'?'selected':''}>Completed</option></select></div><div class="admin-request-grid"><div><strong>Service</strong><span>${escapeHtml(data.service)}</span></div><div><strong>Package</strong><span>${escapeHtml(data.package||'Not specified')}</span></div><div><strong>Budget</strong><span>${escapeHtml(data.budget||'Not specified')}</span></div><div><strong>Website</strong><span>${escapeHtml(data.website||'Not specified')}</span></div></div><div class="admin-message"><strong>Requirement</strong><p>${escapeHtml(data.description).replace(/\n/g,'<br>')}</p></div><p class="admin-time">Submitted ${escapeHtml(formatDate(data.timestamp))}</p></article>`; }).join('') : '<div class="detail-panel"><h2>No requests yet</h2><p>New project requests will appear here automatically.</p></div>'; document.querySelectorAll('.status-select').forEach((select)=>select.addEventListener('change',async()=>{try{await updateDoc(doc(db,'service_requests',select.dataset.status),{status:select.value});adminStatus.textContent=`Updated ${select.dataset.status} to ${select.value}.`;}catch{adminStatus.textContent='Could not update this request.';}})); if(snapshot.size) adminStatus.textContent=''; } catch { adminStatus.textContent='Could not load requests. Check Firebase rules and configuration.'; }
+    };
 
-    loginForm?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!loginStatus) return;
-      loginStatus.textContent = 'Signing in...';
-      const emailInput = document.querySelector<HTMLInputElement>('#admin-email');
-      const passwordInput = document.querySelector<HTMLInputElement>('#admin-password');
-      const email = emailInput?.value.trim().toLowerCase() || '';
-      const password = passwordInput?.value || '';
-      if (email !== ADMIN_EMAIL) {
-        loginStatus.textContent = 'This account is not authorized.';
-        return;
-      }
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        loginStatus.textContent = '';
-      } catch {
-        loginStatus.textContent = 'Sign-in failed. Check the admin account and password.';
-      }
-    });
+    const loadInvoices = async () => {
+      try { const snapshot = await getDocs(query(collection(db,'invoices'),orderBy('createdAt','desc'))); invoiceCount.textContent=`${snapshot.size} invoice${snapshot.size===1?'':'s'}`; invoiceList.innerHTML=snapshot.size?[...snapshot.docs].map((item)=>{const data=item.data();const url=`/invoice/${encodeURIComponent(data.invoiceNumber)}/`;return `<article class="admin-invoice card"><div><p class="card-index">${escapeHtml(data.invoiceNumber)}</p><h2>${escapeHtml(data.clientName)}</h2><p class="admin-meta">${escapeHtml(data.businessName||'Individual')} · ${escapeHtml(formatDay(data.issueDate))}</p></div><div class="invoice-card-right"><strong>${money(data.total)}</strong><span class="invoice-status-badge">${escapeHtml(data.paymentStatus||'Unpaid')}</span><div class="invoice-card-actions"><a class="button secondary" href="${url}" target="_blank" rel="noopener">Open / Print</a><button class="button secondary delete-invoice" data-id="${escapeHtml(item.id)}">Delete</button></div></div></article>`;}).join(''):'<div class="detail-panel"><h2>No invoices yet</h2><p>Generated invoices will appear here.</p></div>'; document.querySelectorAll('.delete-invoice').forEach((button)=>button.addEventListener('click',async()=>{if(!confirm('Delete this invoice? Its public verification page will stop working.'))return;try{await deleteDoc(doc(db,'invoices',button.dataset.id));await loadInvoices();}catch{alert('Could not delete this invoice.');}})); } catch { invoiceList.innerHTML='<div class="detail-panel"><p>Could not load invoices.</p></div>'; }
+    };
 
-    logout?.addEventListener('click', () => signOut(auth));
-    refresh?.addEventListener('click', () => renderRequests());
+    invoiceForm?.addEventListener('input', updatePreview); document.querySelector('#add-item')?.addEventListener('click',()=>{itemRow('',1,'');updatePreview();}); itemRow('Website / software service',1,'0');
+    const issueInput=document.querySelector('#invoice-issue'); if(issueInput) issueInput.value=new Date().toISOString().slice(0,10); updatePreview();
+
+    invoiceForm?.addEventListener('submit',async(event)=>{event.preventDefault();const totals=updatePreview();if(!totals.items.length){invoiceStatus.textContent='Add at least one valid invoice item.';return;}const invoiceNumber=makeInvoiceNumber();const issueDate=document.querySelector('#invoice-issue').value||new Date().toISOString().slice(0,10);const data={invoiceNumber,clientName:document.querySelector('#invoice-client').value.trim(),businessName:document.querySelector('#invoice-business').value.trim()||'',issueDate,dueDate:document.querySelector('#invoice-due').value||'',taxRate:totals.taxRate,discount:totals.discount,subtotal:totals.subtotal,tax:totals.tax,total:totals.total,paymentStatus:document.querySelector('#invoice-payment').value||'Unpaid',notes:document.querySelector('#invoice-notes').value.trim()||'Thank you for choosing MANAV SOLS.',status:'Verified',items:totals.items,createdAt:Timestamp.now()};const verifyUrl=`${location.origin}/invoice/${encodeURIComponent(invoiceNumber)}/`;invoiceStatus.textContent='Generating invoice...';try{await setDoc(doc(db,'invoices',invoiceNumber),data);const qr=`https://quickchart.io/qr?text=${encodeURIComponent(verifyUrl)}&size=180&margin=2`;generatedInvoice.hidden=false;generatedInvoice.innerHTML=`<div class="generated-card"><div><p class="eyebrow">INVOICE GENERATED</p><h3>${escapeHtml(invoiceNumber)}</h3><p>Verified page: <a href="${verifyUrl}" target="_blank" rel="noopener">${verifyUrl}</a></p></div><img src="${qr}" alt="QR code for invoice verification" /><div class="generated-actions"><a class="button primary" href="${verifyUrl}" target="_blank" rel="noopener">Open invoice</a><button class="button secondary" type="button" id="copy-invoice-link">Copy verification link</button></div></div>`;document.querySelector('#copy-invoice-link')?.addEventListener('click',async()=>{await navigator.clipboard.writeText(verifyUrl);invoiceStatus.textContent='Verification link copied.'});invoiceForm.reset();issueInput.value=new Date().toISOString().slice(0,10);invoiceItemsEditor.innerHTML='';itemRow('Website / software service',1,'0');updatePreview();invoiceStatus.textContent=`Invoice ${invoiceNumber} created successfully.`;await loadInvoices();}catch(error){console.error(error);invoiceStatus.textContent='Could not create the invoice. Check Firebase access.';}});
+
+    onAuthStateChanged(auth,async(user)=>{if(user&&user.email?.toLowerCase()===ADMIN_EMAIL){loginCard.hidden=true;adminApp.hidden=false;logout.hidden=false;await Promise.all([loadRequests(),loadInvoices()]);}else{loginCard.hidden=false;adminApp.hidden=true;logout.hidden=true;if(user)await signOut(auth);}});
+    loginForm?.addEventListener('submit',async(event)=>{event.preventDefault();loginStatus.textContent='Signing in...';const email=document.querySelector('#admin-email').value.trim().toLowerCase();const password=document.querySelector('#admin-password').value;if(email!==ADMIN_EMAIL){loginStatus.textContent='This account is not authorized.';return;}try{await signInWithEmailAndPassword(auth,email,password);loginStatus.textContent='';}catch{loginStatus.textContent='Sign-in failed. Check the admin account and password.';}});
+    logout?.addEventListener('click',()=>signOut(auth)); refresh?.addEventListener('click',()=>loadRequests()); document.querySelector('#refresh-invoices')?.addEventListener('click',()=>loadInvoices());
   </script>
 </BaseLayout>
 
 <style>
-.admin-page{max-width:1040px}.admin-header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:34px}.admin-login{max-width:560px;padding:28px}.admin-login-form{display:grid;gap:16px;margin-top:20px}.admin-login-form label{display:grid;gap:7px;color:#0f2147;font-size:13px;font-weight:800}.admin-login-form input,.status-select{width:100%;border:1px solid rgba(44,169,255,.35);border-radius:12px;background:#06111f;color:#fff;padding:12px 13px;font:inherit;font-size:14px;font-weight:650;outline:none;caret-color:#19bfff;color-scheme:dark}.admin-login-form input::placeholder{color:#a9bad0;opacity:1}.admin-login-form input:-webkit-autofill,.admin-login-form input:-webkit-autofill:hover,.admin-login-form input:-webkit-autofill:focus{ -webkit-text-fill-color:#fff; -webkit-box-shadow:0 0 0 1000px #06111f inset; transition:background-color 9999s ease-in-out 0s; }.admin-login-form input:focus,.status-select:focus{border-color:#19bfff;box-shadow:0 0 0 3px rgba(25,191,255,.12)}.status-select{cursor:pointer;max-width:150px}.status-select option{background:#06111f;color:#fff}.admin-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding:16px 18px;border:1px solid var(--border);border-radius:15px;background:rgba(7,16,29,.7);color:#f5f9ff}.admin-toolbar strong{color:#fff}.admin-request-list{display:grid;gap:18px}.admin-request{padding:24px}.admin-request-top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.admin-request-top h2{margin:0 0 5px}.admin-meta{margin:0;color:#52617f;font-size:13px}.admin-request-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}.admin-request-grid div{padding:13px;border:1px solid rgba(44,169,255,.12);border-radius:12px;background:rgba(255,255,255,.02)}.admin-request-grid strong,.admin-message strong{display:block;margin-bottom:5px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#19bfff}.admin-request-grid span{color:#344667;font-size:13px;overflow-wrap:anywhere}.admin-message{margin-top:14px;padding:15px;border-radius:13px;background:rgba(25,191,255,.04);border:1px solid rgba(44,169,255,.1)}.admin-message p{margin:0;color:#344667;white-space:normal}.admin-time{margin:13px 0 0;color:#70839b;font-size:12px}.request-status{min-height:20px}.admin-login-form .request-status{color:#52617f}.admin-login .button.primary{width:100%}@media(max-width:760px){.admin-header,.admin-request-top{flex-direction:column;align-items:flex-start}.admin-request-grid{grid-template-columns:1fr 1fr}.status-select{max-width:none}}@media(max-width:500px){.admin-request-grid{grid-template-columns:1fr}.admin-request{padding:19px}}
+.admin-page{max-width:1080px}.admin-header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:34px}.admin-login{max-width:560px;padding:28px}.admin-login-form{display:grid;gap:16px;margin-top:20px}.admin-login-form label{display:grid;gap:7px;color:#fff;font-size:13px;font-weight:800}.admin-login-form input,.status-select,.invoice-builder input,.invoice-builder select,.invoice-builder textarea{width:100%;border:1px solid rgba(44,169,255,.35);border-radius:12px;background:#06111f;color:#fff;padding:12px 13px;font:inherit;font-size:14px;font-weight:650;outline:none;caret-color:#19bfff;color-scheme:dark}.admin-login-form input::placeholder,.invoice-builder input::placeholder,.invoice-builder textarea::placeholder{color:#a9bad0;opacity:1}.admin-login-form input:-webkit-autofill,.admin-login-form input:-webkit-autofill:hover,.admin-login-form input:-webkit-autofill:focus{-webkit-text-fill-color:#fff;-webkit-box-shadow:0 0 0 1000px #06111f inset}.admin-login-form input:focus,.status-select:focus,.invoice-builder input:focus,.invoice-builder select:focus,.invoice-builder textarea:focus{border-color:#19bfff;box-shadow:0 0 0 3px rgba(25,191,255,.12)}.status-select{cursor:pointer;max-width:150px}.status-select option,.invoice-builder select option{background:#06111f;color:#fff}.admin-section{margin-top:44px}.section-title-row,.items-header,.invoice-builder-bottom,.invoice-actions,.generated-card,.invoice-card-right,.invoice-card-actions{display:flex}.section-title-row{justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:18px}.section-title-row h2{margin:0}.invoice-builder{padding:24px}.invoice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.invoice-grid label{display:grid;gap:7px;color:#fff;font-size:13px;font-weight:800}.full-field{grid-column:1/-1}.items-header{justify-content:space-between;align-items:center;margin:28px 0 12px}.items-header h3{margin:0}.invoice-items-editor{display:grid;gap:10px}.invoice-item-row{display:grid;grid-template-columns:minmax(0,2.2fr) .8fr 1fr 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid rgba(44,169,255,.12);border-radius:14px;background:rgba(255,255,255,.02)}.invoice-item-row input{min-width:0}.item-amount{color:#fff;font-weight:800;text-align:right}.icon-remove{width:38px;height:38px;border:1px solid rgba(255,90,90,.25);border-radius:10px;background:rgba(255,90,90,.06);color:#ff9e9e;font-size:22px;cursor:pointer}.invoice-builder-bottom{justify-content:space-between;gap:24px;margin-top:22px}.invoice-preview-summary{max-width:530px;padding:18px;border-radius:14px;background:rgba(25,191,255,.04);border:1px solid rgba(44,169,255,.1)}.invoice-preview-summary span{display:block;color:#91a4bc;font-size:11px;text-transform:uppercase;letter-spacing:1px}.invoice-preview-summary strong{display:block;color:#fff;margin-top:4px}.invoice-preview-summary p{color:#a9bad0;margin:8px 0 0;font-size:13px}.invoice-total-preview{width:290px;padding:18px;border-radius:14px;background:#06111f;border:1px solid rgba(44,169,255,.18)}.invoice-total-preview div{display:flex;justify-content:space-between;padding:7px 0;color:#a9bad0}.invoice-total-preview strong{color:#fff}.invoice-total-preview .grand{border-top:1px solid rgba(44,169,255,.2);margin-top:7px;padding-top:12px;color:#fff;font-size:20px}.invoice-actions{align-items:center;gap:18px;margin-top:20px}.invoice-actions .request-status{margin:0}.generated-invoice{margin-top:14px}.generated-card{justify-content:space-between;align-items:center;gap:22px;padding:18px 20px;border:1px solid rgba(25,191,255,.25);border-radius:16px;background:linear-gradient(145deg,#071626,#030a12)}.generated-card h3{margin:0;color:#fff}.generated-card p{margin:7px 0 0;color:#a9bad0;font-size:13px}.generated-card a:not(.button){color:#4cc9ff;overflow-wrap:anywhere}.generated-card img{width:100px;height:100px;background:#fff;border-radius:10px;padding:5px}.generated-actions{display:flex;gap:10px;flex-wrap:wrap}.admin-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding:16px 18px;border:1px solid var(--border);border-radius:15px;background:rgba(7,16,29,.7);color:#fff}.admin-toolbar strong{color:#fff}.admin-request-list,.admin-invoice-list{display:grid;gap:18px}.admin-request,.admin-invoice{padding:24px}.admin-request-top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.admin-request-top h2,.admin-invoice h2{margin:0 0 5px}.admin-meta{margin:0;color:#60708a;font-size:13px}.admin-request-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}.admin-request-grid div{padding:13px;border:1px solid rgba(44,169,255,.12);border-radius:12px;background:rgba(255,255,255,.02)}.admin-request-grid strong,.admin-message strong{display:block;margin-bottom:5px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#19bfff}.admin-request-grid span{color:#344667;font-size:13px;overflow-wrap:anywhere}.admin-message{margin-top:14px;padding:15px;border-radius:13px;background:rgba(25,191,255,.04);border:1px solid rgba(44,169,255,.1)}.admin-message p{margin:0;color:#344667;white-space:normal}.admin-time{margin:13px 0 0;color:#70839b;font-size:12px}.request-status{min-height:20px}.admin-login-form .request-status{color:#52617f}.admin-login .button.primary{width:100%}.admin-invoice{display:flex;justify-content:space-between;gap:20px;align-items:center}.invoice-card-right{align-items:flex-end;flex-direction:column;gap:8px}.invoice-card-right>strong{color:#fff;font-size:20px}.invoice-status-badge{font-size:11px;color:#19bfff;font-weight:900;text-transform:uppercase;letter-spacing:1px}.invoice-card-actions{gap:8px}.invoice-card-actions .button{padding:9px 12px;font-size:12px}.delete-invoice{color:#ffaaaa!important;border-color:rgba(255,100,100,.3)!important}@media(max-width:820px){.invoice-item-row{grid-template-columns:1fr 1fr}.invoice-item-row .item-description{grid-column:1/-1}.item-amount{text-align:left}.invoice-builder-bottom{flex-direction:column}.invoice-total-preview{width:auto}.admin-invoice{flex-direction:column;align-items:flex-start}.invoice-card-right{align-items:flex-start}.invoice-card-actions{flex-wrap:wrap}}@media(max-width:760px){.admin-header,.admin-request-top,.section-title-row{flex-direction:column;align-items:flex-start}.admin-request-grid{grid-template-columns:1fr 1fr}.status-select{max-width:none}.invoice-grid{grid-template-columns:1fr}.full-field{grid-column:auto}.generated-card{flex-direction:column;align-items:flex-start}}@media(max-width:500px){.admin-request-grid{grid-template-columns:1fr}.admin-request,.admin-invoice{padding:19px}.invoice-builder{padding:18px}.invoice-item-row{grid-template-columns:1fr}.invoice-item-row .item-description{grid-column:auto}}
 </style>
