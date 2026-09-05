@@ -20,6 +20,10 @@ service cloud.firestore {
         'trackingId', 'name', 'email', 'mobile', 'service',
         'package', 'budget', 'description', 'website', 'status', 'timestamp'
       ])
+      && request.resource.data.keys().hasAll([
+        'trackingId', 'name', 'email', 'mobile', 'service',
+        'package', 'budget', 'description', 'website', 'status', 'timestamp'
+      ])
       && request.resource.data.status == 'Pending'
       && request.resource.data.trackingId is string
       && request.resource.data.trackingId.size() >= 8
@@ -34,8 +38,6 @@ service cloud.firestore {
       && request.resource.data.mobile.size() <= 20
       && request.resource.data.service is string
       && request.resource.data.service.size() > 0
-      && request.resource.data.get('package', '') is string
-      && request.resource.data.get('package', '').size() <= 100
       && request.resource.data.budget is string
       && request.resource.data.budget.size() <= 60
       && request.resource.data.description is string
