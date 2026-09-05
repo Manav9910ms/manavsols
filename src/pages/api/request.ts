@@ -127,14 +127,14 @@ export const POST: APIRoute = async ({ request }) => {
 
     const adminHtml = `<!doctype html><html><body style="margin:0;background:#f4f8fc;font-family:Arial,sans-serif;color:#10213d"><div style="max-width:700px;margin:32px auto;background:#fff;border:1px solid #dbe7f3;border-radius:16px;overflow:hidden"><div style="padding:24px 28px;background:#071a3a;color:#fff"><div style="font-size:13px;letter-spacing:2px;color:#4cc9ff;font-weight:700">MANAV SOLS ADMIN</div><h1 style="margin:8px 0 0;font-size:28px">New Project Request</h1><div style="margin-top:8px;color:#dcecff">${safe.trackingId}</div></div><div style="padding:28px"><table style="width:100%;border-collapse:collapse"><tr><td style="padding:8px 0;font-weight:700">Name</td><td style="padding:8px 0">${safe.name}</td></tr><tr><td style="padding:8px 0;font-weight:700">Email</td><td style="padding:8px 0">${safe.email}</td></tr><tr><td style="padding:8px 0;font-weight:700">Mobile</td><td style="padding:8px 0">${safe.mobile}</td></tr><tr><td style="padding:8px 0;font-weight:700">Service</td><td style="padding:8px 0">${safe.service}</td></tr><tr><td style="padding:8px 0;font-weight:700">Package</td><td style="padding:8px 0">${safe.requestPackage}</td></tr><tr><td style="padding:8px 0;font-weight:700">Budget</td><td style="padding:8px 0">${safe.budget}</td></tr><tr><td style="padding:8px 0;font-weight:700">Website</td><td style="padding:8px 0">${safe.website}</td></tr></table><div style="margin-top:20px;padding:16px;border-radius:12px;background:#f5f9ff"><strong>Requirement</strong><p style="margin-bottom:0">${safe.description}</p></div><p style="color:#64748b;font-size:13px;margin-bottom:0">Submitted: ${safe.timestamp}</p><p style="margin-bottom:0;margin-top:18px"><a href="https://manavsols.com/admin/">Open Admin Panel →</a></p></div></div></body></html>`;
 
-    const sendEmail = async (to: string, subject: string, html: string) => {
+    const sendEmail = async (to: string, subject: string, html: string, replyTo: string) => {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${resendKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ from, to: [to], subject, html, reply_to: email }),
+        body: JSON.stringify({ from, to: [to], subject, html, reply_to: replyTo }),
       });
       if (!response.ok) {
         const errorText = await response.text();
@@ -145,8 +145,8 @@ export const POST: APIRoute = async ({ request }) => {
     };
 
     const [adminEmailSent, customerEmailSent] = await Promise.all([
-      sendEmail(site.email, `New MANAV SOLS Project Request — ${trackingId}`, adminHtml),
-      sendEmail(email, `MANAV SOLS Request Receipt — ${trackingId}`, customerHtml),
+      sendEmail(site.email, `New MANAV SOLS Project Request — ${trackingId}`, adminHtml, email),
+      sendEmail(email, `MANAV SOLS Request Receipt — ${trackingId}`, customerHtml, site.email),
     ]);
 
     if (!adminEmailSent && !customerEmailSent) {
