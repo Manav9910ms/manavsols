@@ -3,26 +3,152 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { services } from "../../data/site";
 
 export function getStaticPaths() {
-  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
 }
 
 const { service } = Astro.props;
+const serviceIcon = ["◎", "⌘", "↗", "▣", "◒", "✦"][Number(service.number) - 1] ?? "✦";
+const related = services.filter((item) => item.slug !== service.slug).slice(0, 3);
 ---
-<BaseLayout title={service.title} description={service.description}>
-  <section class="detail-page container">
-    <p class="eyebrow">Service {service.number}</p>
-    <h1>{service.title}</h1>
-    <p class="lead">{service.description}</p>
-    <div class="detail-panel">
-      <p>{service.details}</p>
-      <h2>What's included</h2>
-      <ul>
-        {service.features.map((feature) => <li>{feature}</li>)}
-      </ul>
-      <div class="actions">
-        <a class="button primary" href="/contact/">Discuss your project</a>
-        <a class="button secondary" href="/services/">All services</a>
+
+<BaseLayout title={service.title} description={service.details}>
+  <section class="service-detail-hero">
+    <div class="container service-detail-hero-grid">
+      <div>
+        <a class="back-link" href="/services/">← All services</a>
+        <p class="eyebrow">Service {service.number}</p>
+        <div class="service-detail-icon" aria-hidden="true">{serviceIcon}</div>
+        <h1>{service.title}</h1>
+        <p class="service-detail-lead">{service.description}</p>
+        <div class="actions">
+          <a class="button primary" href="/request/">Start a project →</a>
+          <a class="button secondary" href="/contact/">Talk to MANAV SOLS</a>
+        </div>
+      </div>
+      <aside class="service-detail-summary">
+        <span>WHAT YOU GET</span>
+        <strong>Practical solutions built around your business.</strong>
+        <p>{service.details}</p>
+        <div class="summary-points">
+          <span>✓ Mobile-ready</span>
+          <span>✓ Business-focused</span>
+          <span>✓ Clear communication</span>
+          <span>✓ Long-term support</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section service-detail-section">
+    <div class="container">
+      <div class="service-detail-section-heading">
+        <p class="eyebrow">What's included</p>
+        <h2>Everything you need to get the job done.</h2>
+        <p>We keep the scope practical and focused on outcomes, not unnecessary complexity.</p>
+      </div>
+      <div class="included-grid">
+        {service.features.map((feature, index) => (
+          <article class="included-card">
+            <span>0{index + 1}</span>
+            <h3>{feature}</h3>
+            <p>Planned and implemented around your goals, users and existing workflow.</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
+
+  <section class="section service-process-section">
+    <div class="container process-grid">
+      <div>
+        <p class="eyebrow">How we work</p>
+        <h2>A simple process from idea to launch.</h2>
+        <p class="process-lead">You explain what you need. We turn it into a clear scope, build the solution, review it with you and help you move forward.</p>
+      </div>
+      <div class="process-list">
+        <article><span>01</span><div><h3>Understand</h3><p>We learn about your business, goals, audience and technical needs.</p></div></article>
+        <article><span>02</span><div><h3>Plan</h3><p>We define the right features, pages, integrations and delivery scope.</p></div></article>
+        <article><span>03</span><div><h3>Build</h3><p>We design and develop the solution with responsive, production-ready code.</p></div></article>
+        <article><span>04</span><div><h3>Launch & support</h3><p>We deploy, review the final result and stay available for future improvements.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section related-services-section">
+    <div class="container">
+      <div class="service-detail-section-heading center">
+        <p class="eyebrow">You may also need</p>
+        <h2>Related services</h2>
+      </div>
+      <div class="related-grid">
+        {related.map((item) => (
+          <a class="related-card" href={`/services/${item.slug}/`}>
+            <span>{item.number}</span>
+            <strong>{item.title}</strong>
+            <p>{item.description}</p>
+            <b>Explore →</b>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section service-cta-section">
+    <div class="container service-cta">
+      <div>
+        <p class="eyebrow">Ready to build?</p>
+        <h2>Tell us what you need.</h2>
+        <p>Share your idea, business requirement or current website. We will help you choose the right next step.</p>
+      </div>
+      <a class="button primary" href="/request/">Request a project →</a>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .service-detail-hero{padding:72px 0 64px;background:radial-gradient(circle at 85% 25%,rgba(24,174,246,.14),transparent 28%),linear-gradient(135deg,#f5faff,#fff 65%)}
+  .service-detail-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+  .back-link{display:inline-block;margin-bottom:26px;color:#145fd1;text-decoration:none;font-size:13px;font-weight:850}
+  .service-detail-icon{width:68px;height:68px;display:grid;place-items:center;margin:4px 0 18px;border:1px solid #cde0fb;border-radius:20px;background:#eaf4ff;color:#1464e8;font-size:30px;font-weight:950;box-shadow:0 12px 30px rgba(20,100,232,.12)}
+  .service-detail-hero h1{max-width:760px;margin:0 0 16px;font-size:clamp(44px,6vw,72px);line-height:.98;letter-spacing:-3px}
+  .service-detail-lead{max-width:720px;margin:0 0 28px;color:#536685;font-size:clamp(18px,2.1vw,21px)}
+  .service-detail-summary{padding:30px;border:1px solid #cfe1f7;border-radius:24px;background:linear-gradient(145deg,#071a38,#0e3f89);color:#fff;box-shadow:0 24px 55px rgba(14,63,137,.22)}
+  .service-detail-summary span{display:block;margin-bottom:10px;color:#70d4ff;font-size:10px;font-weight:950;letter-spacing:2px}
+  .service-detail-summary strong{display:block;font-size:28px;line-height:1.12;letter-spacing:-.9px}
+  .service-detail-summary p{margin:16px 0 20px;color:#d5e5ff;font-size:14px}
+  .summary-points{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .summary-points span{margin:0;padding:9px 10px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.06);color:#e8f4ff;font-size:11px;letter-spacing:0}
+  .service-detail-section{background:#fff}
+  .service-detail-section-heading{max-width:780px;margin-bottom:30px}
+  .service-detail-section-heading h2,.process-grid h2,.service-cta h2{margin:0 0 10px;font-size:clamp(31px,4vw,46px);line-height:1.06;letter-spacing:-1.7px}
+  .service-detail-section-heading>p:last-child,.process-lead,.service-cta p:not(.eyebrow){margin:0;color:#5a6a88}
+  .included-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .included-card{padding:24px;border:1px solid #d7e5f8;border-radius:18px;background:#fbfdff;box-shadow:0 12px 30px rgba(26,75,136,.07)}
+  .included-card span{display:inline-grid;place-items:center;width:36px;height:36px;margin-bottom:18px;border-radius:10px;background:#eaf4ff;color:#1464e8;font-size:10px;font-weight:950}
+  .included-card h3{margin:0 0 8px;font-size:20px}
+  .included-card p{margin:0;color:#61718e;font-size:13px}
+  .service-process-section{background:linear-gradient(180deg,#f5f9ff,#fff)}
+  .process-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:54px;align-items:start}
+  .process-list{display:grid;gap:12px}
+  .process-list article{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:18px;border:1px solid #dbe7f7;border-radius:16px;background:#fff;box-shadow:0 10px 24px rgba(25,70,130,.06)}
+  .process-list article>span{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#0e3d8e;color:#fff;font-size:11px;font-weight:950}
+  .process-list h3{margin:0 0 4px;font-size:18px}
+  .process-list p{margin:0;color:#61708c;font-size:13px}
+  .related-services-section{padding-top:24px}
+  .center{text-align:center;margin-inline:auto}
+  .related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .related-card{display:block;padding:24px;border:1px solid #d7e5f8;border-radius:18px;background:#fff;box-shadow:0 12px 30px rgba(25,70,130,.07);text-decoration:none;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+  .related-card:hover{transform:translateY(-3px);border-color:#a9c9f7;box-shadow:0 18px 34px rgba(25,70,130,.12)}
+  .related-card span{display:block;margin-bottom:9px;color:#1464e8;font-size:11px;font-weight:950;letter-spacing:1px}
+  .related-card strong{display:block;margin-bottom:8px;color:#09133f;font-size:20px}
+  .related-card p{margin:0 0 14px;color:#5c6d8b;font-size:13px}
+  .related-card b{color:#1464e8;font-size:12px}
+  .service-cta-section{padding-top:34px;padding-bottom:84px}
+  .service-cta{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:34px 38px;border-radius:24px;background:linear-gradient(135deg,#0a2e70,#1468e8);color:#fff;box-shadow:0 22px 50px rgba(17,76,159,.2)}
+  .service-cta .eyebrow{color:#78dcff}.service-cta h2{color:#fff}.service-cta p:not(.eyebrow){max-width:700px;color:#dceaff}
+  @media (max-width:900px){.service-detail-hero-grid,.process-grid{grid-template-columns:1fr}.included-grid,.related-grid{grid-template-columns:1fr 1fr}.service-cta{align-items:flex-start;flex-direction:column}}
+  @media (max-width:620px){.service-detail-hero{padding-top:48px}.included-grid,.related-grid{grid-template-columns:1fr}.service-detail-summary{padding:23px}.summary-points{grid-template-columns:1fr}.service-detail-hero h1{letter-spacing:-2px}.service-cta{padding:28px 22px}}
+</style>
