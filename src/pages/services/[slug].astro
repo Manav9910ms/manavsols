@@ -2,6 +2,10 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { services } from "../../data/site";
 
+// These service pages are known at build time, so prerender them even though
+// the site uses server output for its API routes.
+export const prerender = true;
+
 export function getStaticPaths() {
   return services.map((service) => ({
     params: { slug: service.slug },
