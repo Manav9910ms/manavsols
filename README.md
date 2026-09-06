@@ -11,11 +11,10 @@ This repository is the production MANAV SOLS website built with Astro. The proje
 ├── public/              Static public assets
 ├── src/
 │   ├── components/     Reusable UI
-│   ├── data/           Site data and locale definitions
+│   ├── data/           Site and business data
 │   ├── features/       Business feature boundaries
 │   ├── layouts/        Shared page shells and SEO
-│   ├── locales/        Translation/content layer
-│   ├── pages/          File-based routes
+│   ├── pages/          English-only file-based routes
 │   └── styles/         Global design system
 ├── astro.config.mjs
 ├── package.json
@@ -24,7 +23,7 @@ This repository is the production MANAV SOLS website built with Astro. The proje
 └── firestore.rules
 ```
 
-Astro generates the final HTML from `src/pages`. The public site is static-first, while feature folders are reserved for future authentication, client, admin and request workflows.
+Astro generates the final HTML from `src/pages`. The public website is English-only. Request, admin, invoice verification, Firebase and email workflows are kept as application features around the core site.
 
 ## Development
 
